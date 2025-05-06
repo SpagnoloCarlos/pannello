@@ -1,12 +1,8 @@
-import { Navigate, useLocation } from "react-router";
+import { Navigate, useLocation, Outlet } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "./Dashboard/Sidebar";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute() {
   const { user } = useAuth();
   const location = useLocation();
 
@@ -17,7 +13,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   return (
     <main className="flex gap-4 min-h-[100dvh] w-full">
       <Sidebar />
-      {children}
+      <Outlet />
     </main>
   );
 }

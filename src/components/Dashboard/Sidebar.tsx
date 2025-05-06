@@ -16,7 +16,7 @@ const Sidebar = () => {
             <div className="flex flex-col gap-4">
               <NavLink
                 className="flex items-center justify-between py-2 px-4 bg-gray-950 rounded-md transition-color duration-200 hover:bg-black"
-                to="/dashboard/address"
+                to="/dashboard/addresses"
               >
                 Ver direcciones
                 <AngleRightIcon />
