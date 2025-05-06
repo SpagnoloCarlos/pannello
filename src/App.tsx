@@ -5,13 +5,14 @@ import { useEffect } from "react";
 
 function App() {
   const { isAuthenticated } = useAuth();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated]);
+
   return isAuthenticated ? null : <HomePage />;
 }
 

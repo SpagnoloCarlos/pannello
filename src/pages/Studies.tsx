@@ -1,9 +1,7 @@
-import { useAuth } from "../context/AuthContext";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
+import StudyTable from "../components/Dashboard/StudyTable";
 
 const Studies = () => {
-  const { user } = useAuth();
-
   return (
     <section className="w-full max-w-5xl px-6 py-8">
       <div className="flex flex-col gap-8">
@@ -11,6 +9,7 @@ const Studies = () => {
           <HamburgerMenu />
           <h1 className="text-3xl">Estudios</h1>
         </header>
+        <StudyTable />
       </div>
     </section>
   );
