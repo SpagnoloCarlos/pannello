@@ -23,7 +23,6 @@ export interface Address {
   userId: number;
   street: string;
   city: string;
-  state: string;
   zipCode: string;
   country: string;
 }
@@ -165,72 +164,64 @@ const addresses: Address[] = [
     userId: 1,
     street: "Calle Principal 123",
     city: "Ciudad Capital",
-    state: "Estado Central",
     zipCode: "12345",
-    country: "País",
+    country: "Argentina",
   },
   {
     id: 2,
     userId: 2,
     street: "Avenida Central 456",
     city: "Ciudad Norte",
-    state: "Estado Norte",
     zipCode: "54321",
-    country: "País",
+    country: "Argentina",
   },
   {
     id: 3,
     userId: 2,
     street: "Boulevard Sur 789",
     city: "Ciudad Sur",
-    state: "Estado Sur",
     zipCode: "67890",
-    country: "País",
+    country: "Uruguay",
   },
   {
     id: 4,
     userId: 3,
     street: "Calle Comercial 234",
     city: "Ciudad Este",
-    state: "Estado Este",
     zipCode: "34567",
-    country: "País",
+    country: "Uruguay",
   },
   {
     id: 5,
     userId: 3,
     street: "Avenida Libertad 567",
     city: "Ciudad Oeste",
-    state: "Estado Oeste",
     zipCode: "89012",
-    country: "País",
+    country: "Argentina",
   },
   {
     id: 6,
     userId: 3,
     street: "Paseo del Sol 890",
     city: "Ciudad Centro",
-    state: "Estado Centro",
     zipCode: "23456",
-    country: "País",
+    country: "México",
   },
   {
     id: 7,
     userId: 4,
     street: "Calle del Parque 345",
     city: "Ciudad Nueva",
-    state: "Estado Nuevo",
     zipCode: "78901",
-    country: "País",
+    country: "Colombia",
   },
   {
     id: 8,
     userId: 4,
     street: "Avenida Principal 678",
     city: "Ciudad Vieja",
-    state: "Estado Antiguo",
     zipCode: "45678",
-    country: "País",
+    country: "Argentina",
   },
 ];
 

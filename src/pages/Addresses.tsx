@@ -1,13 +1,18 @@
-import { useAuth } from "../context/AuthContext";
+import AddressTable from "../components/Dashboard/AddressTable";
+import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 
-const Address = () => {
-  const { user } = useAuth();
-
+const Addresses = () => {
   return (
     <section className="w-full max-w-5xl px-6 py-8">
-      {user?.role === "admin" ? <>direcciones admin</> : <>direcciones user</>}
+      <div className="flex flex-col gap-8">
+        <header className="flex items-center gap-4">
+          <HamburgerMenu />
+          <h1 className="text-3xl">Direcciones</h1>
+        </header>
+        <AddressTable />
+      </div>
     </section>
   );
 };
 
-export default Address;
+export default Addresses;
