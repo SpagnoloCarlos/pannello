@@ -13,18 +13,13 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
 
-  const getUserStudies = async () => {
-    if (!token) return;
-
+  useEffect(() => {
     startTransition(async () => {
+      if (!token) return;
+
       const response = await fetchUserStudies(token);
       setUserStudies(response);
     });
-  };
-
-  useEffect(() => {
-    if (!token) return;
-    getUserStudies();
   }, [token]);
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import Input from "../Input";
 import { AddressSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { createAddress, createStudy } from "../../services/api";
+import { createAddress } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 
