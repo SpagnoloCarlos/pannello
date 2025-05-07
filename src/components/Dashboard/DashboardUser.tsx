@@ -32,7 +32,7 @@ const DashboardUser = () => {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl md:text-4xl font-bold">Dashboard</h1>
           <span className="text-sm md:text-md text-white/80">
-            Bienvenido, {user?.firstName} {user?.lastName}
+            Bienvenido, {user?.firstName} {user?.lastName}.
           </span>
         </div>
       </header>

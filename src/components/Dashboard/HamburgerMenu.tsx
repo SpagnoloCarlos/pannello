@@ -9,6 +9,7 @@ import HomeIcon from "../Icons/HomeIcon";
 import UserIcon from "../Icons/UserIcon";
 import BookIcon from "../Icons/BookIcon";
 import MapPinIcon from "../Icons/MapPinIcon";
+import UsersIcon from "../Icons/UsersIcon";
 
 const HamburgerMenu = () => {
   const [open, setOpen] = useState(false);
@@ -69,6 +70,12 @@ const HamburgerMenu = () => {
                         Direcciones
                       </SidebarLink>
                     </>
+                  )}
+                  {user?.role === "admin" && (
+                    <SidebarLink to="/users">
+                      <UsersIcon />
+                      Usuarios
+                    </SidebarLink>
                   )}
                 </div>
               </div>

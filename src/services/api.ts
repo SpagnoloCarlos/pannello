@@ -45,10 +45,14 @@ interface ResponseCreatedAddress extends Response {
   address: Address;
 }
 
-type UserWithoutPassword = Omit<User, "password">;
+export type UserWithoutPassword = Omit<User, "password">;
 type UserCreate = Omit<User, "id">;
 type StudyCreate = Omit<Study, "id" | "userId">;
 type AddressCreate = Omit<Address, "id" | "userId">;
+
+interface ResponseGetAllUsers extends Response {
+  users: UserWithoutPassword[];
+}
 
 // Usuarios
 const users: User[] = [
@@ -266,9 +270,38 @@ export const loginApi = async ({
 };
 
 // Usuarios
-export const fetchUsers = async (): Promise<UserWithoutPassword[]> => {
-  await delay();
-  return users.map(({ password, ...user }) => user);
+export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+    const allUsers = users.map(({ password, ...user }) => user);
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios",
+        users: [],
+      };
+
+      return res;
+    }
+
+    const res: ResponseGetAllUsers = {
+      status: 0,
+      msg: "ok",
+      users: allUsers,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseGetAllUsers = {
+      status: 1,
+      msg: "Ocurrió un error al obtener los usuarios",
+      users: [],
+    };
+
+    return res;
+  }
 };
 
 export const fetchUserById = async (userId: string): Promise<UserWithoutPassword> => {

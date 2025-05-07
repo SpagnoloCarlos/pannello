@@ -6,6 +6,7 @@ import UserIcon from "../Icons/UserIcon";
 import BookIcon from "../Icons/BookIcon";
 import MapPinIcon from "../Icons/MapPinIcon";
 import SidebarLink from "./SidebarLink";
+import UsersIcon from "../Icons/UsersIcon";
 
 const Sidebar = () => {
   const { logout } = useAuth();
@@ -36,6 +37,12 @@ const Sidebar = () => {
                   Direcciones
                 </SidebarLink>
               </>
+            )}
+            {user?.role === "admin" && (
+              <SidebarLink to="/users">
+                <UsersIcon />
+                Usuarios
+              </SidebarLink>
             )}
           </div>
         </div>
