@@ -2,9 +2,12 @@ import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { fetchUserStudies, type Study } from "../../services/api";
 import Card from "../Card";
+import Button from "../Button";
+import { useModal } from "../../context/ModalContext";
+import StudyForm from "./StudyForm";
 
 interface StudiesGridProps {
-  onRefresh?: () => void;
+  onRefresh: () => void;
 }
 
 const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
@@ -12,6 +15,7 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
   const [isPending, startTransition] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
+  const { openModal } = useModal();
 
   useEffect(() => {
     startTransition(async () => {
@@ -22,11 +26,16 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
     });
   }, [token]);
 
-  useEffect(() => {
-    if (onRefresh) {
-      onRefresh();
-    }
-  }, [onRefresh]);
+  const handleEditStudy = (id: number): void => {
+    openModal(
+      <div className="flex flex-col gap-8">
+        <h2 className="text-xl font-semibold">Editar estudio</h2>
+        <div>
+          <StudyForm onSuccess={onRefresh} idStudy={id} />
+        </div>
+      </div>,
+    );
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -48,6 +57,9 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
                 <span className="text-md font-semibold">{institution}</span>
                 <span className="text-sm text-white/60">Año: {year}</span>
                 <p className="text-sm text-white/60">{description}</p>
+                <Button className="mt-4" onClick={() => handleEditStudy(id)}>
+                  Editar
+                </Button>
               </div>
             </Card>
           ))}

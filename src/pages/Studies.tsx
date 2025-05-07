@@ -39,7 +39,7 @@ const Studies = () => {
             <CirclePlusIcon />
           </Button>
         </header>
-        <StudiesGrid key={refreshKey} />
+        <StudiesGrid key={refreshKey} onRefresh={handleRefresh} />
       </div>
     </section>
   );

@@ -3,8 +3,8 @@ import Button from "../Button";
 import Input from "../Input";
 import { studySchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { createStudy } from "../../services/api";
+import { useEffect, useState, useTransition } from "react";
+import { createStudy, fetchUserStudyById, updateStudy } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 
@@ -17,26 +17,30 @@ interface IFormInput {
 
 interface StudyFormProps {
   onSuccess?: () => void;
+  idStudy?: number;
 }
 
-const StudyForm = ({ onSuccess }: StudyFormProps) => {
+const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
+  const [defaultValues, setDefaultValues] = useState({
+    title: "",
+    institution: "",
+    year: "",
+    description: "",
+  });
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
-    defaultValues: {
-      title: "",
-      institution: "",
-      year: "",
-      description: "",
-    },
+    defaultValues,
     resolver: zodResolver(studySchema),
   });
   const { token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
+  const [isPending, startTransition] = useTransition();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
@@ -44,8 +48,10 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
     if (!token) {
       return;
     }
-    const response = await createStudy(token, data);
 
+    const response = idStudy
+      ? await updateStudy(token, idStudy, data)
+      : await createStudy(token, data);
     if (response.status === 0) {
       onSuccess?.();
       closeModal();
@@ -55,6 +61,21 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!token) return;
+    if (idStudy) {
+      startTransition(async () => {
+        const response = await fetchUserStudyById(token, idStudy);
+        if (response.status === 0) {
+          setDefaultValues(response.study);
+          reset(response.study);
+        } else {
+          console.error(response.msg);
+        }
+      });
+    }
+  }, [idStudy, token, reset]);
 
   return (
     <form
@@ -73,6 +94,7 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
             placeholder="Ing. en sistemas de información"
             required
             error={errors?.title?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -88,6 +110,7 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
             placeholder="Universidad Tecnológica Nacional"
             required
             error={errors?.institution?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -103,6 +126,7 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
             placeholder="2024"
             required
             error={errors?.year?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -118,12 +142,13 @@ const StudyForm = ({ onSuccess }: StudyFormProps) => {
             placeholder="Especializado en frontend"
             required
             error={errors?.description?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
       />
-      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={loading}>
-        Agregar Estudio
+      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={loading || isPending}>
+        {idStudy ? "Editar Estudio" : "Agregar Estudio"}
       </Button>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </form>

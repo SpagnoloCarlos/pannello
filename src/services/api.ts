@@ -32,15 +32,16 @@ interface LoginProps {
   password: string;
 }
 
-interface ResponseCreatedStudy {
+interface Response {
   status: number;
   msg: string;
+}
+
+interface ResponseCreatedStudy extends Response {
   study: Study;
 }
 
-interface ResponseCreatedAddress {
-  status: number;
-  msg: string;
+interface ResponseCreatedAddress extends Response {
   address: Address;
 }
 
@@ -333,7 +334,59 @@ export const updateUser = async (
 export const fetchUserStudies = async (token: string): Promise<Study[]> => {
   await delay();
   const { id: userId } = JSON.parse(atob(token));
-  return studies.filter((s) => s.userId === userId);
+  const userStudies = studies.filter((s) => s.userId === userId);
+
+  return userStudies;
+};
+
+export const fetchUserStudyById = async (
+  token: string,
+  id: number,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const study = studies.find((s) => s.userId === userId && s.id === id);
+
+    if (!study) {
+      const res: ResponseCreatedStudy = {
+        status: 1,
+        msg: "El estudio no existe",
+        study: {
+          id: 0,
+          userId: 0,
+          title: "",
+          institution: "",
+          year: "",
+          description: "",
+        },
+      };
+      return res;
+    }
+
+    const res: ResponseCreatedStudy = {
+      status: 0,
+      msg: "ok",
+      study,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedStudy = {
+      status: 1,
+      msg: "Ocurrió un error al obtener el estudio",
+      study: {
+        id: 0,
+        userId: 0,
+        title: "",
+        institution: "",
+        year: "",
+        description: "",
+      },
+    };
+
+    return res;
+  }
 };
 
 export const createStudy = async (
@@ -360,7 +413,7 @@ export const createStudy = async (
     return res;
   } catch {
     const res: ResponseCreatedStudy = {
-      status: 0,
+      status: 1,
       study: {
         id: 0,
         userId: 0,
@@ -372,6 +425,59 @@ export const createStudy = async (
       msg: "Ocurrió un error al crear el estudio",
     };
     return res;
+  }
+};
+
+export const updateStudy = async (
+  token: string,
+  studyId: number,
+  studyData: Partial<StudyCreate>,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const index = studies.findIndex((s) => s.id === studyId && s.userId === userId);
+
+    if (index === -1) {
+      return {
+        status: 1,
+        msg: "Estudio no encontrado",
+        study: {
+          id: 0,
+          userId: 0,
+          title: "",
+          institution: "",
+          year: "",
+          description: "",
+        },
+      };
+    }
+
+    const updatedStudy: Study = {
+      ...studies[index],
+      ...studyData,
+    };
+
+    studies[index] = updatedStudy;
+
+    return {
+      status: 0,
+      msg: "ok",
+      study: updatedStudy,
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al actualizar el estudio",
+      study: {
+        id: 0,
+        userId: 0,
+        title: "",
+        institution: "",
+        year: "",
+        description: "",
+      },
+    };
   }
 };
 
