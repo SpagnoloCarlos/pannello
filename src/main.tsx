@@ -11,6 +11,8 @@ import Addresses from "./pages/Addresses.tsx";
 import { ModalProvider } from "./context/ModalContext.tsx";
 import Modal from "./components/Modal.tsx";
 import Profile from "./pages/Profile.tsx";
+import AdminRoutes from "./components/AdminRoutes.tsx";
+import Users from "./pages/Users.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -24,6 +26,9 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<UserRoutes />}>
               <Route path="addresses" element={<Addresses />} />
               <Route path="studies" element={<Studies />} />
+            </Route>
+            <Route element={<AdminRoutes />}>
+              <Route path="users" element={<Users />} />
             </Route>
           </Route>
         </Routes>
