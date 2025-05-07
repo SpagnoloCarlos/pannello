@@ -1,7 +1,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { fetchUserStudies, type Study } from "../../services/api";
-import Card from "./Card";
+import Card from "../Card";
 
 const StudiesGrid = () => {
   const { token } = useAuth();

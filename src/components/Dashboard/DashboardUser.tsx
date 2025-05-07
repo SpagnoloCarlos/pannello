@@ -1,5 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
-import Card from "./Card";
+import Card from "../Card";
 import HamburgerMenu from "./HamburgerMenu";
 import { useEffect, useState, useTransition } from "react";
 import { fetchUserAddresses, fetchUserStudies, type Address, type Study } from "../../services/api";
@@ -39,25 +39,6 @@ const DashboardUser = () => {
         </div>
       </header>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg">
-        {/* <div className="md:col-span-4">
-          <Card>
-            <h2 className="text-xl font-semibold mb-4">Información personal</h2>
-            <ul className="text-white/80">
-              <li>
-                Nombre: <span>{user?.firstName}</span>
-              </li>
-              <li>
-                Apellido: <span>{user?.lastName}</span>
-              </li>
-              <li>
-                Email: <span>{user?.email}</span>
-              </li>
-              <li>
-                Rol: <span>{user?.role === "admin" ? "Administrador" : "Usuario"}</span>
-              </li>
-            </ul>
-          </Card>
-        </div> */}
         <Card>
           <div className="flex flex-col">
             <h2 className="text-xl font-semibold mb-2">Estudios</h2>

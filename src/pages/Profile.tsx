@@ -1,4 +1,4 @@
-import Card from "../components/Dashboard/Card";
+import Card from "../components/Card";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import { useAuth } from "../context/AuthContext";
 

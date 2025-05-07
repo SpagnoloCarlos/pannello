@@ -1,7 +1,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { fetchUserAddresses, type Address } from "../../services/api";
-import Card from "./Card";
+import Card from "../Card";
 
 const AddressesGrid = () => {
   const { token } = useAuth();

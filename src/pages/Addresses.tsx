@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import AddressesGrid from "../components/Dashboard/Addresses.grid";
+import AddressesGrid from "../components/Addresses/AddressesGrid";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";

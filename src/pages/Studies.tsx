@@ -1,6 +1,6 @@
 import Button from "../components/Button";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
-import StudiesGrid from "../components/Dashboard/StudiesGrid";
+import StudiesGrid from "../components/Studies/StudiesGrid";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";
 
