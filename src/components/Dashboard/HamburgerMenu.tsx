@@ -2,16 +2,17 @@ import { useState } from "react";
 import HamburgerIcon from "../Icons/HamburgerIcon";
 import CloseIcon from "../Icons/CloseIcon";
 import { useAuth } from "../../context/AuthContext";
-import { NavLink, useLocation } from "react-router";
-import AngleRightIcon from "../Icons/AngleRightIcon";
 import Button from "../Button";
 import LogoutIcon from "../Icons/LogoutIcon";
+import SidebarLink from "./SidebarLink";
+import HomeIcon from "../Icons/HomeIcon";
+import UserIcon from "../Icons/UserIcon";
+import BookIcon from "../Icons/BookIcon";
+import MapPinIcon from "../Icons/MapPinIcon";
 
 const HamburgerMenu = () => {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
-  const { pathname } = useLocation();
-  const isDashboard = pathname === "/dashboard";
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -30,47 +31,48 @@ const HamburgerMenu = () => {
         <HamburgerIcon />
       </button>
       <div
-        className={`absolute top-0 left-0 z-10 p-4 grid w-xs min-h-[100dvh] bg-gray-800 transition duration-500 ${open ? "-translate-x-0" : "-translate-x-80"}`}
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition duration-200 ${open ? "z-auto" : "-z-10"}`}
+        onClick={() => handleClose()}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute top-0 left-0 z-10 p-4 grid w-2xs min-h-[100dvh] bg-gray-800 transition duration-500 ${open ? "-translate-x-0" : "-translate-x-80"}`}
       >
         <div className="flex flex-col gap-4">
-          <button className="self-end cursor-pointer" onClick={() => handleClose()}>
+          <button
+            className="self-end p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+            onClick={() => handleClose()}
+          >
             <CloseIcon />
           </button>
           <div className="flex flex-col gap-4 h-full">
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-8">
-                <h2 className="text-xl">Hola {user?.firstName}!</h2>
-                {user?.role === "user" && (
-                  <div className="flex flex-col gap-4">
-                    {isDashboard ? (
-                      <>
-                        <NavLink
-                          to="/dashboard/studies"
-                          className="flex items-center justify-between py-2 px-4 bg-gray-950 rounded-md transition-color duration-200 hover:bg-black"
-                        >
-                          Ver estudios
-                          <AngleRightIcon />
-                        </NavLink>
-                        <NavLink
-                          className="flex items-center justify-between py-2 px-4 bg-gray-950 rounded-md transition-color duration-200 hover:bg-black"
-                          to="/dashboard/addresses"
-                        >
-                          Ver direcciones
-                          <AngleRightIcon />
-                        </NavLink>
-                      </>
-                    ) : (
-                      <NavLink
-                        to="/dashboard"
-                        className="flex items-center justify-between py-2 px-4 bg-gray-950 rounded-md transition-color duration-200 hover:bg-black"
-                      >
-                        Ver dashboard
-                        <AngleRightIcon />
-                      </NavLink>
-                    )}
-                  </div>
-                )}
+                <h2 className="text-2xl font-bold uppercase">Pannello</h2>
+                <div className="flex flex-col gap-4">
+                  <SidebarLink to="/dashboard">
+                    <HomeIcon />
+                    Dashboard
+                  </SidebarLink>
+                  <SidebarLink to="/profile">
+                    <UserIcon />
+                    Mi Perfil
+                  </SidebarLink>
+                  {user?.role === "user" && (
+                    <>
+                      <SidebarLink to="/studies">
+                        <BookIcon />
+                        Estudios
+                      </SidebarLink>
+                      <SidebarLink to="/addresses">
+                        <MapPinIcon />
+                        Direcciones
+                      </SidebarLink>
+                    </>
+                  )}
+                </div>
               </div>
+
               <Button className="mt-auto" variant="secondary" onClick={() => logout()}>
                 <div className="flex items-center gap-2">
                   Cerrar sesión
