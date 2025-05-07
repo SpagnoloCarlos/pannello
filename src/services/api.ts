@@ -54,6 +54,10 @@ interface ResponseGetAllUsers extends Response {
   users: UserWithoutPassword[];
 }
 
+interface ResponseCreatedUser extends Response {
+  user?: UserWithoutPassword;
+}
+
 // Usuarios
 const users: User[] = [
   {
@@ -279,7 +283,7 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
     if (role !== "admin") {
       const res: ResponseGetAllUsers = {
         status: 1,
-        msg: "No tiene los permisos necesarios",
+        msg: "No tiene los permisos necesarios para realizar esta acción",
         users: [],
       };
 
@@ -304,63 +308,163 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
   }
 };
 
-export const fetchUserById = async (userId: string): Promise<UserWithoutPassword> => {
-  await delay();
-  const user = users.find((u) => u.id === Number.parseInt(userId));
+export const fetchUserById = async (
+  token: string,
+  userId: number,
+): Promise<ResponseCreatedUser> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
 
-  if (!user) {
-    throw new Error("Usuario no encontrado");
+    if (role !== "admin") {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const user = users.find((u) => u.id === userId);
+
+    if (!user) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "El usuario no existe",
+      };
+      return res;
+    }
+
+    const res: ResponseCreatedUser = {
+      status: 0,
+      msg: "ok",
+      user,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedUser = {
+      status: 1,
+      msg: "Ocurrió un error al obtener el usuario",
+    };
+
+    return res;
   }
-
-  const { password, ...userWithoutPassword } = user;
-  return userWithoutPassword;
 };
 
-export const createUser = async (userData: UserCreate): Promise<UserWithoutPassword> => {
-  await delay();
+export const createUser = async (
+  token: string,
+  userData: UserCreate,
+): Promise<ResponseCreatedUser> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
 
-  if (users.some((u) => u.email === userData.email)) {
-    throw new Error("El email ya está en uso");
+    if (role !== "admin") {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    if (users.some((u) => u.email === userData.email)) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "El email ingresado ya está en uso",
+      };
+
+      return res;
+    }
+
+    const newUser: User = {
+      ...userData,
+      id: users.length + 1,
+    };
+
+    users.push(newUser);
+
+    const { password, ...userWithoutPassword } = newUser;
+    const res: ResponseCreatedUser = {
+      status: 0,
+      msg: "ok",
+      user: userWithoutPassword,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedUser = {
+      status: 1,
+      msg: "Ocurrió un error al crear el usuario",
+    };
+
+    return res;
   }
-
-  const newUser: User = {
-    ...userData,
-    id: users.length + 1,
-  };
-
-  users.push(newUser);
-
-  const { password, ...userWithoutPassword } = newUser;
-  return userWithoutPassword;
 };
 
 export const updateUser = async (
-  userId: string,
+  token: string,
+  userId: number,
   userData: Partial<UserCreate>,
-): Promise<UserWithoutPassword> => {
-  await delay();
+): Promise<ResponseCreatedUser> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
 
-  const index = users.findIndex((u) => u.id === Number.parseInt(userId));
+    if (role !== "admin") {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
 
-  if (index === -1) {
-    throw new Error("Usuario no encontrado");
+      return res;
+    }
+
+    const index = users.findIndex((u) => u.id === userId);
+
+    if (index === -1) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "Usuario no encontrado",
+      };
+
+      return res;
+    }
+
+    if (userData.email !== users[index].email && users.some((u) => u.email === userData.email)) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "El email ingresado ya está en uso",
+      };
+
+      return res;
+    }
+
+    const updatedUser: User = {
+      ...users[index],
+      ...userData,
+      id: userId,
+    };
+
+    users[index] = updatedUser;
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    const res: ResponseCreatedUser = {
+      status: 0,
+      msg: "ok",
+      user: userWithoutPassword,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedUser = {
+      status: 1,
+      msg: "Ocurrió un error al actualizar el usuario",
+    };
+
+    return res;
   }
-
-  if (userData.email !== users[index].email && users.some((u) => u.email === userData.email)) {
-    throw new Error("El email ya está en uso");
-  }
-
-  // Mantener la contraseña si no se proporciona una nueva
-  const updatedUser: User = {
-    ...users[index],
-    ...userData,
-    id: Number.parseInt(userId),
-  };
-
-  users[index] = updatedUser;
-
-  const { password, ...userWithoutPassword } = updatedUser;
-  return userWithoutPassword;
 };
 
 // Estudios

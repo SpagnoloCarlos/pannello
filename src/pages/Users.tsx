@@ -4,6 +4,7 @@ import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import { useModal } from "../context/ModalContext";
 import UserPlusIcon from "../components/Icons/UserPlusIcon";
 import UsersGrid from "../components/Users/UsersGrid";
+import UserForm from "../components/Users/UserForm";
 
 const Users = () => {
   const { openModal } = useModal();
@@ -16,8 +17,10 @@ const Users = () => {
   const handleAddUser = () => {
     openModal(
       <div className="flex flex-col gap-8">
-        <h2 className="text-xl font-semibold">Agregar usuario</h2>
-        <div>{/* <StudyForm onSuccess={handleRefresh} /> */}</div>
+        <h2 className="text-xl font-semibold">Crear usuario</h2>
+        <div>
+          <UserForm onSuccess={handleRefresh} />
+        </div>
       </div>,
     );
   };
@@ -36,7 +39,7 @@ const Users = () => {
             </div>
           </div>
           <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleAddUser}>
-            Agregar Usuario
+            Crear Usuario
             <UserPlusIcon />
           </Button>
         </header>

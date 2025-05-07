@@ -23,3 +23,15 @@ export const AddressSchema = object({
   country: string().min(1, "El país es requerido"),
   zipCode: string().min(1, "El código postal es requerido"),
 });
+
+export const userSchema = object({
+  firstName: string().min(1, "El nombre es requerido"),
+  lastName: string().min(1, "El apellido es requerido"),
+  email: string()
+    .email({ message: "El email ingresado es inválido" })
+    .min(1, "El email es requerido"),
+  password: string().min(1, "La contraseña es requerida"),
+  role: string().refine((val) => val === "admin" || val === "user", {
+    message: "El rol solo puede ser 'admin' o 'user'",
+  }),
+});
