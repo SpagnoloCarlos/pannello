@@ -33,21 +33,19 @@ const DashboardAdmin = () => {
           </span>
         </div>
       </header>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg">
-        <Card>
-          <div className="flex flex-col">
-            <h2 className="text-xl font-semibold mb-2">Usuarios</h2>
-            <span className="text-sm text-white/60 mb-3">Total de usuarios en el sistema</span>
-            {isPending ? (
-              <div className="animate-pulse">
-                <div className="h-9 bg-gray-200 rounded w-9"></div>
-              </div>
-            ) : (
-              <span className="text-3xl font-bold">{users?.length}</span>
-            )}
-          </div>
-        </Card>
-      </div>
+      <Card className="max-w-full md:max-w-fit">
+        <div className="flex flex-col">
+          <h2 className="text-xl font-semibold mb-2">Usuarios</h2>
+          <span className="text-sm text-white/60 mb-3">Total de usuarios en el sistema</span>
+          {isPending ? (
+            <div className="animate-pulse">
+              <div className="h-9 bg-gray-200 rounded w-9"></div>
+            </div>
+          ) : (
+            <span className="text-3xl font-bold">{users?.length}</span>
+          )}
+        </div>
+      </Card>
     </div>
   );
 };

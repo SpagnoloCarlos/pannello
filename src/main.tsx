@@ -29,6 +29,7 @@ createRoot(document.getElementById("root")!).render(
             </Route>
             <Route element={<AdminRoutes />}>
               <Route path="users" element={<Users />} />
+              <Route path="user/:pid" element={<div>user</div>} />
             </Route>
           </Route>
         </Routes>
