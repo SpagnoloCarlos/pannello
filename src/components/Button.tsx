@@ -6,7 +6,7 @@ const Button = ({ variant = "primary", className = "", children, ...props }: But
   const variantClasses = {
     primary: "bg-sky-800 hover:bg-sky-800/80 text-white",
     secondary: "bg-red-600 hover:bg-red-800 text-white",
-    tertiary: "bg-tertiary hover:bg-tertiary-dark text-white",
+    tertiary: "bg-gray-800 hover:bg-slate-900 text-white",
   };
 
   return (
