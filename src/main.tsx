@@ -8,20 +8,25 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Studies from "./pages/Studies.tsx";
 import UserRoutes from "./components/UserRoutes.tsx";
 import Addresses from "./pages/Addresses.tsx";
+import { ModalProvider } from "./context/ModalContext.tsx";
+import Modal from "./components/Modal.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="dashboard" element={<ProtectedRoute />}>
-          <Route index element={<Dashboard />} />
-          <Route element={<UserRoutes />}>
-            <Route path="addresses" element={<Addresses />} />
-            <Route path="studies" element={<Studies />} />
+      <ModalProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="dashboard" element={<ProtectedRoute />}>
+            <Route index element={<Dashboard />} />
+            <Route element={<UserRoutes />}>
+              <Route path="addresses" element={<Addresses />} />
+              <Route path="studies" element={<Studies />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+        <Modal />
+      </ModalProvider>
     </AuthProvider>
   </BrowserRouter>,
 );
