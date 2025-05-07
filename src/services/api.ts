@@ -38,6 +38,12 @@ interface ResponseCreatedStudy {
   study: Study;
 }
 
+interface ResponseCreatedAddress {
+  status: number;
+  msg: string;
+  address: Address;
+}
+
 type UserWithoutPassword = Omit<User, "password">;
 type UserCreate = Omit<User, "id">;
 type StudyCreate = Omit<Study, "id" | "userId">;
@@ -391,19 +397,43 @@ export const fetchUserAddresses = async (token: string): Promise<Address[]> => {
 };
 
 export const createAddress = async (
-  userId: string,
+  token: string,
   addressData: AddressCreate,
-): Promise<Address> => {
-  await delay();
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
 
-  const newAddress: Address = {
-    ...addressData,
-    id: addresses.length + 1,
-    userId: Number.parseInt(userId),
-  };
+    const newAddress: Address = {
+      ...addressData,
+      id: addresses.length + 1,
+      userId: Number.parseInt(userId),
+    };
 
-  addresses.push(newAddress);
-  return newAddress;
+    addresses.push(newAddress);
+
+    const res: ResponseCreatedAddress = {
+      status: 0,
+      msg: "ok",
+      address: newAddress,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedAddress = {
+      status: 1,
+      msg: "Ocurrió un error al crear la dirección",
+      address: {
+        id: 0,
+        userId: 0,
+        street: "",
+        city: "",
+        country: "",
+        zipCode: "",
+      },
+    };
+    return res;
+  }
 };
 
 export const deleteAddress = async (addressId: string): Promise<{ success: boolean }> => {

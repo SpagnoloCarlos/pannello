@@ -3,14 +3,24 @@ import AddressesGrid from "../components/Addresses/AddressesGrid";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";
+import { useCallback, useState } from "react";
+import AddressForm from "../components/Addresses/AddressForm";
 
 const Addresses = () => {
   const { openModal } = useModal();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
 
   const handleOpenModal = () => {
     openModal(
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold">Agregar dirección</h2>
+        <div>
+          <AddressForm onSuccess={handleRefresh} />
+        </div>
       </div>,
     );
   };
@@ -28,7 +38,7 @@ const Addresses = () => {
             <CirclePlusIcon />
           </Button>
         </header>
-        <AddressesGrid />
+        <AddressesGrid key={refreshKey} />
       </div>
     </section>
   );

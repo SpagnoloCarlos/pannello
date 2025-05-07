@@ -3,7 +3,11 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchUserAddresses, type Address } from "../../services/api";
 import Card from "../Card";
 
-const AddressesGrid = () => {
+interface AddressesGridProps {
+  onRefresh?: () => void;
+}
+
+const AddressesGrid = ({ onRefresh }: AddressesGridProps) => {
   const { token } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userAddresses, setUserAddresses] = useState<Address[]>();
@@ -17,6 +21,12 @@ const AddressesGrid = () => {
       setUserAddresses(response);
     });
   }, [token]);
+
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh();
+    }
+  }, [onRefresh]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
