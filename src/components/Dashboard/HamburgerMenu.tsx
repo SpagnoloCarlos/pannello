@@ -23,7 +23,7 @@ const HamburgerMenu = () => {
   };
 
   return (
-    <div className="md:hidden">
+    <div className="md:hidden mt-1">
       <button
         className="cursor-pointer flex items-center justify-center"
         onClick={() => handleOpen()}

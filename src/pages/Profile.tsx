@@ -8,12 +8,12 @@ const Profile = () => {
   return (
     <section className="w-full max-w-5xl px-6 py-8">
       <div className="flex flex-col gap-8">
-        <header className="flex items-center gap-4">
+        <header className="flex gap-4">
           <HamburgerMenu />
-          <h1 className="text-4xl font-bold">Mi Perfl</h1>
+          <h1 className="text-2xl md:text-4xl font-bold">Mi Perfl</h1>
         </header>
         <Card className="max-w-sm">
-          <h2 className="text-3xl font-semibold mb-4">Información personal</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold mb-4">Información personal</h2>
           <ul className="flex flex-col gap-4 [&>li]:flex [&>li]:flex-col">
             <li>
               <span className="text-sm text-white/60">Nombre</span>

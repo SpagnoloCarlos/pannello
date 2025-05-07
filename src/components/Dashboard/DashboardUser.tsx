@@ -12,28 +12,26 @@ const DashboardUser = () => {
   const [userAddresses, setUserAddresses] = useState<Address[]>();
 
   useEffect(() => {
-    startTransitionStudies(async () => {
-      if (!token) return;
+    if (token) {
+      startTransitionStudies(async () => {
+        const response = await fetchUserStudies(token);
+        setUserStudies(response);
+      });
 
-      const response = await fetchUserStudies(token);
-      setUserStudies(response);
-    });
-
-    startTransitionAddresses(async () => {
-      if (!token) return;
-
-      const response = await fetchUserAddresses(token);
-      setUserAddresses(response);
-    });
+      startTransitionAddresses(async () => {
+        const response = await fetchUserAddresses(token);
+        setUserAddresses(response);
+      });
+    }
   }, [token]);
 
   return (
     <div className="flex flex-col gap-8">
-      <header className="flex items-center gap-4">
+      <header className="flex gap-4">
         <HamburgerMenu />
         <div className="flex flex-col gap-1">
-          <h1 className="text-4xl font-bold">Dashboard</h1>
-          <span className="text-md text-white/80">
+          <h1 className="text-2xl md:text-4xl font-bold">Dashboard</h1>
+          <span className="text-sm md:text-md text-white/80">
             Bienvenido, {user?.firstName} {user?.lastName}
           </span>
         </div>

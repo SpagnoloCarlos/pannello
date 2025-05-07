@@ -28,13 +28,17 @@ const Studies = () => {
   return (
     <section className="w-full max-w-5xl px-6 py-8">
       <div className="flex flex-col gap-8">
-        <header className="flex items-center gap-4">
-          <HamburgerMenu />
-          <div className="flex flex-col gap-1">
-            <h1 className="text-4xl font-bold">Mis Estudios</h1>
-            <span className="text-md text-white/80">Gestiona tu información académica</span>
+        <header className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="flex gap-4">
+            <HamburgerMenu />
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl md:text-4xl font-bold">Mis Estudios</h1>
+              <span className="text-sm md:text-md text-white/80">
+                Gestiona tu información académica
+              </span>
+            </div>
           </div>
-          <Button variant="tertiary" className="ml-auto gap-2" onClick={handleAddStudy}>
+          <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleAddStudy}>
             Agregar Estudio
             <CirclePlusIcon />
           </Button>
