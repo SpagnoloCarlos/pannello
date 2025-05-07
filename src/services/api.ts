@@ -502,6 +502,51 @@ export const fetchUserAddresses = async (token: string): Promise<Address[]> => {
   return addresses.filter((a) => a.userId === Number.parseInt(userId));
 };
 
+export const fetchUserAddressById = async (
+  token: string,
+  id: number,
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const address = addresses.find((a) => a.userId === userId && a.id === id);
+
+    if (!address) {
+      return {
+        status: 1,
+        msg: "La dirección no existe",
+        address: {
+          id: 0,
+          userId: 0,
+          street: "",
+          city: "",
+          zipCode: "",
+          country: "",
+        },
+      };
+    }
+
+    return {
+      status: 0,
+      msg: "ok",
+      address,
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al obtener la dirección",
+      address: {
+        id: 0,
+        userId: 0,
+        street: "",
+        city: "",
+        zipCode: "",
+        country: "",
+      },
+    };
+  }
+};
+
 export const createAddress = async (
   token: string,
   addressData: AddressCreate,
@@ -539,6 +584,59 @@ export const createAddress = async (
       },
     };
     return res;
+  }
+};
+
+export const updateAddress = async (
+  token: string,
+  addressId: number,
+  addressData: Partial<AddressCreate>,
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const index = addresses.findIndex((a) => a.id === addressId && a.userId === userId);
+
+    if (index === -1) {
+      return {
+        status: 1,
+        msg: "Dirección no encontrada",
+        address: {
+          id: 0,
+          userId: 0,
+          street: "",
+          city: "",
+          zipCode: "",
+          country: "",
+        },
+      };
+    }
+
+    const updatedAddress: Address = {
+      ...addresses[index],
+      ...addressData,
+    };
+
+    addresses[index] = updatedAddress;
+
+    return {
+      status: 0,
+      msg: "ok",
+      address: updatedAddress,
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al actualizar la dirección",
+      address: {
+        id: 0,
+        userId: 0,
+        street: "",
+        city: "",
+        zipCode: "",
+        country: "",
+      },
+    };
   }
 };
 

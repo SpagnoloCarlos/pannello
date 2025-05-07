@@ -3,8 +3,8 @@ import Button from "../Button";
 import Input from "../Input";
 import { AddressSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { createAddress } from "../../services/api";
+import { useEffect, useState, useTransition } from "react";
+import { createAddress, fetchUserAddressById, updateAddress } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 
@@ -16,27 +16,45 @@ interface IAddressFormInput {
 }
 
 interface AddressFormProps {
-  onSuccess?: () => void;
+  onSuccess: () => void;
+  idAddress?: number;
 }
 
-const AddressForm = ({ onSuccess }: AddressFormProps) => {
+const AddressForm = ({ onSuccess, idAddress }: AddressFormProps) => {
+  const [defaultValues, setDefaultValues] = useState({
+    street: "",
+    city: "",
+    country: "",
+    zipCode: "",
+  });
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
-    defaultValues: {
-      street: "",
-      city: "",
-      country: "",
-      zipCode: "",
-    },
+    defaultValues,
     resolver: zodResolver(AddressSchema),
   });
   const { token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (idAddress && token) {
+      startTransition(async () => {
+        const response = await fetchUserAddressById(token, idAddress);
+        if (response.status === 0) {
+          setDefaultValues(response.address);
+          reset(response.address);
+        } else {
+          console.error(response.msg);
+        }
+      });
+    }
+  }, [idAddress, token, reset]);
 
   const onSubmit: SubmitHandler<IAddressFormInput> = async (data) => {
     setLoading(true);
@@ -44,7 +62,9 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
     if (!token) {
       return;
     }
-    const response = await createAddress(token, data);
+    const response = idAddress
+      ? await updateAddress(token, idAddress, data)
+      : await createAddress(token, data);
 
     if (response.status === 0) {
       onSuccess?.();
@@ -73,6 +93,7 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
             placeholder="Av. Gral Roca 1950"
             required
             error={errors?.street?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -88,6 +109,7 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
             placeholder="San Miguel de Tucumán"
             required
             error={errors?.city?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -103,6 +125,7 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
             placeholder="Argentina"
             required
             error={errors?.country?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -118,12 +141,13 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
             placeholder="4000"
             required
             error={errors?.zipCode?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
       />
-      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={loading}>
-        Agregar Dirección
+      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={loading || isPending}>
+        {idAddress ? "Editar Dirección" : "Agregar Dirección"}
       </Button>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </form>

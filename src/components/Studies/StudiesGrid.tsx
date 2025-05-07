@@ -46,17 +46,18 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
                 <div className="h-5 bg-gray-200 rounded w-46 mb-2"></div>
                 <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-32"></div>
+                <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="h-10 bg-gray-200 rounded-md w-full"></div>
               </div>
             </Card>
           ))
         : userStudies?.map(({ id, title, institution, year, description }) => (
             <Card key={`study_card_${id}`}>
-              <div className="flex flex-col">
+              <div className="flex flex-col h-full">
                 <span className="text-2xl font-bold mb-4">{title}</span>
                 <span className="text-md font-semibold">{institution}</span>
                 <span className="text-sm text-white/60">Año: {year}</span>
-                <p className="text-sm text-white/60">{description}</p>
+                <p className="text-sm text-white/60 mb-auto">{description}</p>
                 <Button className="mt-4" onClick={() => handleEditStudy(id)}>
                   Editar
                 </Button>
