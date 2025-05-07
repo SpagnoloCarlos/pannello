@@ -3,20 +3,35 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchUserStudies, type Study } from "../../services/api";
 import Card from "../Card";
 
-const StudiesGrid = () => {
+interface StudiesGridProps {
+  onRefresh?: () => void;
+}
+
+const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
   const { token } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
 
-  useEffect(() => {
-    startTransition(async () => {
-      if (!token) return;
+  const getUserStudies = async () => {
+    if (!token) return;
 
+    startTransition(async () => {
       const response = await fetchUserStudies(token);
       setUserStudies(response);
     });
+  };
+
+  useEffect(() => {
+    if (!token) return;
+    getUserStudies();
   }, [token]);
+
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh();
+    }
+  }, [onRefresh]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -1,16 +1,26 @@
+import { useState, useCallback } from "react";
 import Button from "../components/Button";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import StudiesGrid from "../components/Studies/StudiesGrid";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";
+import StudyForm from "../components/Studies/StudyForm";
 
 const Studies = () => {
   const { openModal } = useModal();
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleOpenModal = () => {
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
+
+  const handleAddStudy = () => {
     openModal(
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         <h2 className="text-xl font-semibold">Agregar estudio</h2>
+        <div>
+          <StudyForm onSuccess={handleRefresh} />
+        </div>
       </div>,
     );
   };
@@ -24,12 +34,12 @@ const Studies = () => {
             <h1 className="text-4xl font-bold">Mis Estudios</h1>
             <span className="text-md text-white/80">Gestiona tu información académica</span>
           </div>
-          <Button variant="tertiary" className="ml-auto gap-2" onClick={handleOpenModal}>
+          <Button variant="tertiary" className="ml-auto gap-2" onClick={handleAddStudy}>
             Agregar Estudio
             <CirclePlusIcon />
           </Button>
         </header>
-        <StudiesGrid />
+        <StudiesGrid key={refreshKey} />
       </div>
     </section>
   );

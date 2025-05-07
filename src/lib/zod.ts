@@ -6,3 +6,13 @@ export const loginSchema = object({
     .min(1, "El email es requerido"),
   password: string().min(1, "La contraseña es requerida"),
 });
+
+export const studySchema = object({
+  title: string().min(1, "Por favor ingresa un título"),
+  institution: string().min(1, "Por favor ingresa una institución"),
+  year: string()
+    .min(1, "Por favor ingresa un año")
+    .min(4, "El año debe contener 4 dígitos")
+    .max(4, "El año debe contener 4 dígitos"),
+  description: string().min(1, "Por favor ingresa una descripción"),
+});

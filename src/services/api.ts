@@ -32,6 +32,12 @@ interface LoginProps {
   password: string;
 }
 
+interface ResponseCreatedStudy {
+  status: number;
+  msg: string;
+  study: Study;
+}
+
 type UserWithoutPassword = Omit<User, "password">;
 type UserCreate = Omit<User, "id">;
 type StudyCreate = Omit<Study, "id" | "userId">;
@@ -324,17 +330,43 @@ export const fetchUserStudies = async (token: string): Promise<Study[]> => {
   return studies.filter((s) => s.userId === userId);
 };
 
-export const createStudy = async (userId: string, studyData: StudyCreate): Promise<Study> => {
-  await delay();
+export const createStudy = async (
+  token: string,
+  studyData: StudyCreate,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
 
-  const newStudy: Study = {
-    ...studyData,
-    id: studies.length + 1,
-    userId: Number.parseInt(userId),
-  };
+    const newStudy: Study = {
+      ...studyData,
+      id: studies.length + 1,
+      userId: Number.parseInt(userId),
+    };
 
-  studies.push(newStudy);
-  return newStudy;
+    studies.push(newStudy);
+
+    const res: ResponseCreatedStudy = {
+      status: 0,
+      study: newStudy,
+      msg: "ok",
+    };
+    return res;
+  } catch {
+    const res: ResponseCreatedStudy = {
+      status: 0,
+      study: {
+        id: 0,
+        userId: 0,
+        title: "",
+        institution: "",
+        year: "",
+        description: "",
+      },
+      msg: "Ocurrió un error al crear el estudio",
+    };
+    return res;
+  }
 };
 
 export const deleteStudy = async (studyId: string): Promise<{ success: boolean }> => {
