@@ -15,12 +15,20 @@ const DashboardUser = () => {
     if (token) {
       startTransitionStudies(async () => {
         const response = await fetchUserStudies(token);
-        setUserStudies(response);
+        if (response.status === 0) {
+          setUserStudies(response.studies);
+        } else {
+          console.log(response.msg);
+        }
       });
 
       startTransitionAddresses(async () => {
         const response = await fetchUserAddresses(token);
-        setUserAddresses(response);
+        if (response.status === 0) {
+          setUserAddresses(response.addresses);
+        } else {
+          console.log(response.msg);
+        }
       });
     }
   }, [token]);

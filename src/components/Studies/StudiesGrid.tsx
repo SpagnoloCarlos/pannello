@@ -28,7 +28,11 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
       if (studies === undefined) {
         startTransition(async () => {
           const response = await fetchUserStudies(token);
-          setUserStudies(response);
+          if (response.status === 0) {
+            setUserStudies(response.studies);
+          } else {
+            console.log(response.msg);
+          }
         });
       } else {
         if (studies) {

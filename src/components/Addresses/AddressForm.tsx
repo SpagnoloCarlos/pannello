@@ -46,7 +46,7 @@ const AddressForm = ({ onSuccess, idAddress }: AddressFormProps) => {
     if (idAddress && token) {
       startTransition(async () => {
         const response = await fetchUserAddressById(token, idAddress);
-        if (response.status === 0) {
+        if (response.status === 0 && response.address) {
           setDefaultValues(response.address);
           reset(response.address);
         } else {

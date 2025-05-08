@@ -26,7 +26,11 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
       if (addresses === undefined) {
         startTransition(async () => {
           const response = await fetchUserAddresses(token);
-          setUserAddresses(response);
+          if (response.status === 0) {
+            setUserAddresses(response.addresses);
+          } else {
+            console.log(response.msg);
+          }
         });
       } else {
         if (addresses) {

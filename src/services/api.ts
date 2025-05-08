@@ -42,12 +42,20 @@ interface ResponseLogin extends Response {
   token?: string;
 }
 
+interface ResponseAllStudies extends Response {
+  studies?: Study[];
+}
+
 interface ResponseCreatedStudy extends Response {
-  study: Study;
+  study?: Study;
+}
+
+interface ResponseAllAddresses extends Response {
+  addresses?: Address[];
 }
 
 interface ResponseCreatedAddress extends Response {
-  address: Address;
+  address?: Address;
 }
 
 export type UserWithoutPassword = Omit<User, "password">;
@@ -56,7 +64,7 @@ type StudyCreate = Omit<Study, "id" | "userId">;
 type AddressCreate = Omit<Address, "id" | "userId">;
 
 interface ResponseGetAllUsers extends Response {
-  users: UserWithoutPassword[];
+  users?: UserWithoutPassword[];
 }
 
 interface ResponseCreatedUser extends Response {
@@ -309,7 +317,6 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
       const res: ResponseGetAllUsers = {
         status: 1,
         msg: "No tiene los permisos necesarios para realizar esta acción",
-        users: [],
       };
 
       return res;
@@ -328,7 +335,6 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
     const res: ResponseGetAllUsers = {
       status: 1,
       msg: "Ocurrió un error al obtener los usuarios",
-      users: [],
     };
 
     return res;
@@ -534,12 +540,25 @@ export const deleteUser = async (token: string, userId: number): Promise<Respons
 };
 
 // Estudios
-export const fetchUserStudies = async (token: string): Promise<Study[]> => {
-  await delay();
-  const { id: userId } = JSON.parse(atob(token));
-  const userStudies = studies.filter((s) => s.userId === userId);
+export const fetchUserStudies = async (token: string): Promise<ResponseAllStudies> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const userStudies = studies.filter((s) => s.userId === userId);
 
-  return userStudies;
+    const res: ResponseAllStudies = {
+      status: 0,
+      msg: "ok",
+      studies: userStudies,
+    };
+    return res;
+  } catch {
+    const res: ResponseAllStudies = {
+      status: 1,
+      msg: "Ocurrió un error al obtener los estudios",
+    };
+    return res;
+  }
 };
 
 export const fetchUserStudyById = async (
@@ -555,14 +574,6 @@ export const fetchUserStudyById = async (
       const res: ResponseCreatedStudy = {
         status: 1,
         msg: "El estudio no existe",
-        study: {
-          id: 0,
-          userId: 0,
-          title: "",
-          institution: "",
-          year: "",
-          description: "",
-        },
       };
       return res;
     }
@@ -578,14 +589,6 @@ export const fetchUserStudyById = async (
     const res: ResponseCreatedStudy = {
       status: 1,
       msg: "Ocurrió un error al obtener el estudio",
-      study: {
-        id: 0,
-        userId: 0,
-        title: "",
-        institution: "",
-        year: "",
-        description: "",
-      },
     };
 
     return res;
@@ -617,14 +620,6 @@ export const createStudy = async (
   } catch {
     const res: ResponseCreatedStudy = {
       status: 1,
-      study: {
-        id: 0,
-        userId: 0,
-        title: "",
-        institution: "",
-        year: "",
-        description: "",
-      },
       msg: "Ocurrió un error al crear el estudio",
     };
     return res;
@@ -645,14 +640,6 @@ export const updateStudy = async (
       return {
         status: 1,
         msg: "Estudio no encontrado",
-        study: {
-          id: 0,
-          userId: 0,
-          title: "",
-          institution: "",
-          year: "",
-          description: "",
-        },
       };
     }
 
@@ -672,14 +659,6 @@ export const updateStudy = async (
     return {
       status: 1,
       msg: "Ocurrió un error al actualizar el estudio",
-      study: {
-        id: 0,
-        userId: 0,
-        title: "",
-        institution: "",
-        year: "",
-        description: "",
-      },
     };
   }
 };
@@ -716,11 +695,26 @@ export const deleteStudy = async (token: string, studyId: number): Promise<Respo
 };
 
 // Direcciones
-export const fetchUserAddresses = async (token: string): Promise<Address[]> => {
-  await delay();
-  const { id: userId } = JSON.parse(atob(token));
+export const fetchUserAddresses = async (token: string): Promise<ResponseAllAddresses> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+    const userAddresses = addresses.filter((a) => a.userId === Number.parseInt(userId));
+    const res: ResponseAllAddresses = {
+      status: 0,
+      msg: "ok",
+      addresses: userAddresses,
+    };
 
-  return addresses.filter((a) => a.userId === Number.parseInt(userId));
+    return res;
+  } catch {
+    const res: ResponseAllAddresses = {
+      status: 1,
+      msg: "Ocurrió un error al obtener las direcciones",
+    };
+
+    return res;
+  }
 };
 
 export const fetchUserAddressById = async (
@@ -733,38 +727,26 @@ export const fetchUserAddressById = async (
     const address = addresses.find((a) => a.userId === userId && a.id === id);
 
     if (!address) {
-      return {
+      const res: ResponseCreatedAddress = {
         status: 1,
         msg: "La dirección no existe",
-        address: {
-          id: 0,
-          userId: 0,
-          street: "",
-          city: "",
-          zipCode: "",
-          country: "",
-        },
       };
+      return res;
     }
 
-    return {
+    const res: ResponseCreatedAddress = {
       status: 0,
       msg: "ok",
       address,
     };
+
+    return res;
   } catch {
-    return {
+    const res: ResponseCreatedAddress = {
       status: 1,
       msg: "Ocurrió un error al obtener la dirección",
-      address: {
-        id: 0,
-        userId: 0,
-        street: "",
-        city: "",
-        zipCode: "",
-        country: "",
-      },
     };
+    return res;
   }
 };
 
@@ -795,14 +777,6 @@ export const createAddress = async (
     const res: ResponseCreatedAddress = {
       status: 1,
       msg: "Ocurrió un error al crear la dirección",
-      address: {
-        id: 0,
-        userId: 0,
-        street: "",
-        city: "",
-        country: "",
-        zipCode: "",
-      },
     };
     return res;
   }
@@ -822,14 +796,6 @@ export const updateAddress = async (
       return {
         status: 1,
         msg: "Dirección no encontrada",
-        address: {
-          id: 0,
-          userId: 0,
-          street: "",
-          city: "",
-          zipCode: "",
-          country: "",
-        },
       };
     }
 
@@ -849,14 +815,6 @@ export const updateAddress = async (
     return {
       status: 1,
       msg: "Ocurrió un error al actualizar la dirección",
-      address: {
-        id: 0,
-        userId: 0,
-        street: "",
-        city: "",
-        zipCode: "",
-        country: "",
-      },
     };
   }
 };

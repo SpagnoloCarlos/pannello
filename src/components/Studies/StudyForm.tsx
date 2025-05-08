@@ -66,7 +66,7 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
     if (token && idStudy) {
       startTransition(async () => {
         const response = await fetchUserStudyById(token, idStudy);
-        if (response.status === 0) {
+        if (response.status === 0 && response.study) {
           setDefaultValues(response.study);
           reset(response.study);
         } else {
