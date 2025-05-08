@@ -1,11 +1,11 @@
 import { Navigate, useLocation, Outlet } from "react-router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
-export default function AdminRoutes() {
+export default function UserRoutes() {
   const { user } = useAuth();
   const location = useLocation();
 
-  if (user?.role !== "admin") {
+  if (user?.role !== "user") {
     return <Navigate to="/dashboard" state={{ from: location }} replace />;
   }
 

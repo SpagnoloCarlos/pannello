@@ -3,15 +3,15 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { AuthProvider } from "./context/AuthContext.tsx";
-import ProtectedRoute from "./components/ProtectedRoutes.tsx";
+import ProtectedRoute from "./components/AccessControl/ProtectedRoutes.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Studies from "./pages/Studies.tsx";
-import UserRoutes from "./components/UserRoutes.tsx";
+import UserRoutes from "./components/AccessControl/UserRoutes.tsx";
 import Addresses from "./pages/Addresses.tsx";
 import { ModalProvider } from "./context/ModalContext.tsx";
 import Modal from "./components/Modal.tsx";
 import Profile from "./pages/Profile.tsx";
-import AdminRoutes from "./components/AdminRoutes.tsx";
+import AdminRoutes from "./components/AccessControl/AdminRoutes.tsx";
 import Users from "./pages/Users.tsx";
 import User from "./pages/User.tsx";
 
