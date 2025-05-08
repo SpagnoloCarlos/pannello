@@ -63,8 +63,7 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
   };
 
   useEffect(() => {
-    if (!token) return;
-    if (idStudy) {
+    if (token && idStudy) {
       startTransition(async () => {
         const response = await fetchUserStudyById(token, idStudy);
         if (response.status === 0) {

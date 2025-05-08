@@ -2,7 +2,7 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { loginApi } from "../services/api";
 
 interface User {
-  role: string;
+  role: "user" | "admin";
   [key: string]: any;
 }
 

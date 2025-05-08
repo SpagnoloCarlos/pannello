@@ -7,24 +7,31 @@ import { useModal } from "../../context/ModalContext";
 import StudyForm from "./StudyForm";
 
 interface StudiesGridProps {
-  onRefresh: () => void;
+  onRefresh?: () => void;
+  studies?: Study[];
 }
 
-const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
-  const { token } = useAuth();
+const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
+  const { token, user } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
   const { openModal } = useModal();
 
   useEffect(() => {
-    startTransition(async () => {
-      if (!token) return;
+    if (token) {
+      if (!studies) {
+        startTransition(async () => {
+          if (!token) return;
 
-      const response = await fetchUserStudies(token);
-      setUserStudies(response);
-    });
-  }, [token]);
+          const response = await fetchUserStudies(token);
+          setUserStudies(response);
+        });
+      } else {
+        setUserStudies(studies);
+      }
+    }
+  }, [token, studies]);
 
   const handleEditStudy = (id: number): void => {
     openModal(
@@ -37,6 +44,10 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
     );
   };
 
+  if (studies && studies?.length === 0) {
+    return <p>El usuario no tiene estudios cargados</p>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {isPending
@@ -46,8 +57,14 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
                 <div className="h-5 bg-gray-200 rounded w-46 mb-2"></div>
                 <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
-                <div className="h-10 bg-gray-200 rounded-md w-full"></div>
+                {user?.role === "user" ? (
+                  <>
+                    <div className="h-3 bg-gray-200 rounded w-32 mb-2"></div>
+                    <div className="h-10 bg-gray-200 rounded-md w-full"></div>
+                  </>
+                ) : (
+                  <div className="h-3 bg-gray-200 rounded w-32"></div>
+                )}
               </div>
             </Card>
           ))
@@ -58,9 +75,11 @@ const StudiesGrid = ({ onRefresh }: StudiesGridProps) => {
                 <span className="text-md font-semibold">{institution}</span>
                 <span className="text-sm text-white/60">Año: {year}</span>
                 <p className="text-sm text-white/60 mb-auto">{description}</p>
-                <Button className="mt-4" onClick={() => handleEditStudy(id)}>
-                  Editar
-                </Button>
+                {user?.role === "user" && (
+                  <Button className="mt-4" onClick={() => handleEditStudy(id)}>
+                    Editar
+                  </Button>
+                )}
               </div>
             </Card>
           ))}

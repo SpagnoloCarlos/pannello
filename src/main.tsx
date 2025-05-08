@@ -13,6 +13,7 @@ import Modal from "./components/Modal.tsx";
 import Profile from "./pages/Profile.tsx";
 import AdminRoutes from "./components/AdminRoutes.tsx";
 import Users from "./pages/Users.tsx";
+import User from "./pages/User.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -29,7 +30,7 @@ createRoot(document.getElementById("root")!).render(
             </Route>
             <Route element={<AdminRoutes />}>
               <Route path="users" element={<Users />} />
-              <Route path="user/:pid" element={<div>user</div>} />
+              <Route path="user/:id" element={<User />} />
             </Route>
           </Route>
         </Routes>

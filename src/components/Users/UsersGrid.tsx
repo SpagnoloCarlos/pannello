@@ -49,7 +49,9 @@ const UsersGrid = () => {
                   {role === "admin" ? "Administrador" : "Usuario"}
                 </span>
                 <Button className="mt-4">
-                  <Link to={`/user/${id}`}>Ver usuario</Link>
+                  <Link to={`/user/${id}`} className="w-full">
+                    Ver usuario
+                  </Link>
                 </Button>
               </div>
             </Card>

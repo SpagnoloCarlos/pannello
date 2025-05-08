@@ -7,24 +7,29 @@ import AddressForm from "./AddressForm";
 import Button from "../Button";
 
 interface AddressesGridProps {
-  onRefresh: () => void;
+  onRefresh?: () => void;
+  addresses?: Address[];
 }
 
-const AddressesGrid = ({ onRefresh }: AddressesGridProps) => {
-  const { token } = useAuth();
+const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
+  const { token, user } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userAddresses, setUserAddresses] = useState<Address[]>();
   const skeletonArray = Array(3).fill(null);
   const { openModal } = useModal();
 
   useEffect(() => {
-    startTransition(async () => {
-      if (!token) return;
-
-      const response = await fetchUserAddresses(token);
-      setUserAddresses(response);
-    });
-  }, [token]);
+    if (token) {
+      if (!addresses) {
+        startTransition(async () => {
+          const response = await fetchUserAddresses(token);
+          setUserAddresses(response);
+        });
+      } else {
+        setUserAddresses(addresses);
+      }
+    }
+  }, [token, addresses]);
 
   const handleEditAddress = (id: number) => {
     openModal(
@@ -37,6 +42,10 @@ const AddressesGrid = ({ onRefresh }: AddressesGridProps) => {
     );
   };
 
+  if (addresses && addresses?.length === 0) {
+    return <p>El usuario no tiene direcciones cargados</p>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {isPending
@@ -46,8 +55,14 @@ const AddressesGrid = ({ onRefresh }: AddressesGridProps) => {
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
                 <div className="h-4 bg-gray-200 rounded w-46 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-36 mb-5"></div>
-                <div className="h-10 bg-gray-200 rounded-md w-full"></div>
+                {user?.role === "user" ? (
+                  <>
+                    <div className="h-4 bg-gray-200 rounded w-36 mb-5"></div>
+                    <div className="h-10 bg-gray-200 rounded-md w-full"></div>
+                  </>
+                ) : (
+                  <div className="h-4 bg-gray-200 rounded w-36 mb-1"></div>
+                )}
               </div>
             </Card>
           ))
@@ -58,9 +73,11 @@ const AddressesGrid = ({ onRefresh }: AddressesGridProps) => {
                 <span className="text-md text-white/60">Ciudad: {city}</span>
                 <span className="text-md text-white/60">País: {country}</span>
                 <span className="text-md text-white/60 mb-auto">Código Postal: {zipCode}</span>
-                <Button className="mt-4" onClick={() => handleEditAddress(id)}>
-                  Editar
-                </Button>
+                {user?.role === "user" && (
+                  <Button className="mt-4" onClick={() => handleEditAddress(id)}>
+                    Editar
+                  </Button>
+                )}
               </div>
             </Card>
           ))}

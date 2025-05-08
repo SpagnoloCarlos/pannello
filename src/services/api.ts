@@ -58,6 +58,15 @@ interface ResponseCreatedUser extends Response {
   user?: UserWithoutPassword;
 }
 
+interface userWithStudiesAndAddresses extends UserWithoutPassword {
+  studies: Study[];
+  addresses: Address[];
+}
+
+interface ResponseFindUser extends Response {
+  user?: userWithStudiesAndAddresses;
+}
+
 // Usuarios
 const users: User[] = [
   {
@@ -308,16 +317,13 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
   }
 };
 
-export const fetchUserById = async (
-  token: string,
-  userId: number,
-): Promise<ResponseCreatedUser> => {
+export const fetchUserById = async (token: string, userId: number): Promise<ResponseFindUser> => {
   try {
     await delay();
     const { role } = JSON.parse(atob(token));
 
     if (role !== "admin") {
-      const res: ResponseCreatedUser = {
+      const res: ResponseFindUser = {
         status: 1,
         msg: "No tiene los permisos necesarios para realizar esta acción",
       };
@@ -328,22 +334,29 @@ export const fetchUserById = async (
     const user = users.find((u) => u.id === userId);
 
     if (!user) {
-      const res: ResponseCreatedUser = {
+      const res: ResponseFindUser = {
         status: 1,
         msg: "El usuario no existe",
       };
       return res;
     }
 
-    const res: ResponseCreatedUser = {
+    const userStudies = studies?.filter((s) => s.userId === userId);
+    const userAddresses = addresses?.filter((a) => a.userId === userId);
+
+    const res: ResponseFindUser = {
       status: 0,
       msg: "ok",
-      user,
+      user: {
+        ...user,
+        studies: userStudies,
+        addresses: userAddresses,
+      },
     };
 
     return res;
   } catch {
-    const res: ResponseCreatedUser = {
+    const res: ResponseFindUser = {
       status: 1,
       msg: "Ocurrió un error al obtener el usuario",
     };

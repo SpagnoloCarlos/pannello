@@ -16,7 +16,7 @@ interface IAddressFormInput {
 }
 
 interface AddressFormProps {
-  onSuccess: () => void;
+  onSuccess?: () => void;
   idAddress?: number;
 }
 
