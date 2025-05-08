@@ -1,15 +1,15 @@
 import { useState } from "react";
-import HamburgerIcon from "../Icons/HamburgerIcon";
-import CloseIcon from "../Icons/CloseIcon";
-import { useAuth } from "../../context/AuthContext";
-import Button from "../Button";
-import LogoutIcon from "../Icons/LogoutIcon";
+import HamburgerIcon from "./Icons/HamburgerIcon";
+import CloseIcon from "./Icons/CloseIcon";
+import { useAuth } from "../context/AuthContext";
+import Button from "./Button";
+import LogoutIcon from "./Icons/LogoutIcon";
 import SidebarLink from "./SidebarLink";
-import HomeIcon from "../Icons/HomeIcon";
-import UserIcon from "../Icons/UserIcon";
-import BookIcon from "../Icons/BookIcon";
-import MapPinIcon from "../Icons/MapPinIcon";
-import UsersIcon from "../Icons/UsersIcon";
+import HomeIcon from "./Icons/HomeIcon";
+import UserIcon from "./Icons/UserIcon";
+import BookIcon from "./Icons/BookIcon";
+import MapPinIcon from "./Icons/MapPinIcon";
+import UsersIcon from "./Icons/UsersIcon";
 
 const HamburgerMenu = () => {
   const [open, setOpen] = useState(false);

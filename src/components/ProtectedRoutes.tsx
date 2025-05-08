@@ -1,6 +1,6 @@
 import { Navigate, useLocation, Outlet } from "react-router";
 import { useAuth } from "../context/AuthContext";
-import Sidebar from "./Dashboard/Sidebar";
+import Sidebar from "./Sidebar";
 
 export default function ProtectedRoute() {
   const { user } = useAuth();

@@ -1,12 +1,12 @@
-import { useAuth } from "../../context/AuthContext";
-import Button from "../Button";
-import LogoutIcon from "../Icons/LogoutIcon";
-import HomeIcon from "../Icons/HomeIcon";
-import UserIcon from "../Icons/UserIcon";
-import BookIcon from "../Icons/BookIcon";
-import MapPinIcon from "../Icons/MapPinIcon";
+import { useAuth } from "../context/AuthContext";
+import Button from "./Button";
+import LogoutIcon from "./Icons/LogoutIcon";
+import HomeIcon from "./Icons/HomeIcon";
+import UserIcon from "./Icons/UserIcon";
+import BookIcon from "./Icons/BookIcon";
+import MapPinIcon from "./Icons/MapPinIcon";
 import SidebarLink from "./SidebarLink";
-import UsersIcon from "../Icons/UsersIcon";
+import UsersIcon from "./Icons/UsersIcon";
 
 const Sidebar = () => {
   const { logout } = useAuth();
