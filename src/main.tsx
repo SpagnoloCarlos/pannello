@@ -14,27 +14,30 @@ import Profile from "./pages/Profile.tsx";
 import AdminRoutes from "./components/AccessControl/AdminRoutes.tsx";
 import Users from "./pages/Users.tsx";
 import User from "./pages/User.tsx";
+import { ToastProvider } from "./context/ToastContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AuthProvider>
       <ModalProvider>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/" element={<ProtectedRoute />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route element={<UserRoutes />}>
-              <Route path="addresses" element={<Addresses />} />
-              <Route path="studies" element={<Studies />} />
+        <ToastProvider>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/" element={<ProtectedRoute />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route element={<UserRoutes />}>
+                <Route path="addresses" element={<Addresses />} />
+                <Route path="studies" element={<Studies />} />
+              </Route>
+              <Route element={<AdminRoutes />}>
+                <Route path="users" element={<Users />} />
+                <Route path="user/:id" element={<User />} />
+              </Route>
             </Route>
-            <Route element={<AdminRoutes />}>
-              <Route path="users" element={<Users />} />
-              <Route path="user/:id" element={<User />} />
-            </Route>
-          </Route>
-        </Routes>
-        <Modal />
+          </Routes>
+          <Modal />
+        </ToastProvider>
       </ModalProvider>
     </AuthProvider>
   </BrowserRouter>,

@@ -8,6 +8,7 @@ import StudyForm from "./StudyForm";
 import EditIcon from "../Icons/EditIcon";
 import TrashIcon from "../Icons/TrashIcon";
 import ConfirmDialog from "../ConfirmDialog";
+import { useToast } from "../../context/ToastContext";
 
 interface StudiesGridProps {
   onRefresh?: () => void;
@@ -20,6 +21,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
   const { openModal, closeModal } = useModal();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (token) {
@@ -52,13 +54,20 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
       const response = await deleteStudy(token, id);
 
       if (response?.status === 0) {
-        closeModal();
+        showToast({
+          title: "El estudio fué eliminado con éxito",
+          position: "bottomRight",
+        });
         if (onRefresh) {
           onRefresh();
         }
       } else {
-        console.log(response?.msg);
+        showToast({
+          title: response.msg,
+          position: "bottomRight",
+        });
       }
+      closeModal();
     }
   };
 
