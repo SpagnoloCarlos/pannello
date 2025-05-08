@@ -1,29 +1,25 @@
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import Button from "../Button";
 import Input from "../Input";
-import { userSchema } from "../../lib/zod";
+import { userSchemaProfile } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState, useTransition } from "react";
-import { createUser, fetchUserById, updateUserByAdmin } from "../../services/api";
+import { useEffect, useState } from "react";
+import { updateUser } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
-import Select from "../Select";
 import { useToast } from "../../context/ToastContext";
 
 interface IFormInput {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
-  role: "admin" | "user";
 }
 
 interface UserFormProps {
   onSuccess?: () => void;
-  idUser?: number;
 }
 
-const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
+const UserFormProfile = ({ onSuccess }: UserFormProps) => {
   const {
     control,
     handleSubmit,
@@ -34,32 +30,24 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
       firstName: "",
       lastName: "",
       email: "",
-      password: "",
-      role: "user",
     },
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(userSchemaProfile),
   });
-  const { token } = useAuth();
+  const { token, user, setUser } = useAuth();
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
-  const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
 
   useEffect(() => {
-    if (token && idUser) {
-      startTransition(async () => {
-        const response = await fetchUserById(token, idUser);
-        if (response.status === 0 && response.user !== undefined) {
-          reset(response.user);
-        } else {
-          showToast({
-            title: response.msg,
-            position: "bottomRight",
-          });
-        }
-      });
+    if (user) {
+      const information = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      };
+      reset(information);
     }
-  }, [idUser, token, reset]);
+  }, [user]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setError("");
@@ -67,15 +55,17 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
       return;
     }
 
-    const response = idUser
-      ? await updateUserByAdmin(token, idUser, data)
-      : await createUser(token, data);
+    const response = await updateUser(token, data);
 
     if (response.status === 0) {
+      if (response.user) {
+        sessionStorage.setItem("user", JSON.stringify(response.user));
+        setUser(response.user);
+      }
       onSuccess?.();
       closeModal();
       showToast({
-        title: idUser ? "Usuario modificado con éxito" : "Usuario creado con éxito",
+        title: "Usuario modificado con éxito",
         position: "bottomRight",
       });
     } else {
@@ -105,7 +95,6 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
               placeholder="Carlos"
               required
               error={errors?.firstName?.message ?? ""}
-              disabled={isPending}
               {...field}
             />
           )}
@@ -121,7 +110,6 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
               placeholder="Spagnolo"
               required
               error={errors?.lastName?.message ?? ""}
-              disabled={isPending}
               {...field}
             />
           )}
@@ -138,50 +126,16 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
             placeholder="carlos@example.com"
             required
             error={errors?.email?.message ?? ""}
-            disabled={isPending}
             {...field}
           />
         )}
       />
-      <Controller
-        name="password"
-        control={control}
-        render={({ field }) => (
-          <Input
-            type="password"
-            id="password"
-            label="Contraseña"
-            placeholder="***********"
-            required
-            error={errors?.password?.message ?? ""}
-            disabled={isPending}
-            {...field}
-          />
-        )}
-      />
-      <Controller
-        name="role"
-        control={control}
-        render={({ field }) => (
-          <Select
-            id="role"
-            label="Rol"
-            error={errors?.role?.message ?? ""}
-            disabled={isPending}
-            options={[
-              { label: "Usuario", value: "user" },
-              { label: "Administrador", value: "admin" },
-            ]}
-            {...field}
-          />
-        )}
-      />
-      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={isPending}>
-        {idUser ? "Editar Usuario" : "Crear Usuario"}
+      <Button type="submit" className="mt-2 disabled:bg-gray-500">
+        Editar Información
       </Button>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </form>
   );
 };
 
-export default UserForm;
+export default UserFormProfile;

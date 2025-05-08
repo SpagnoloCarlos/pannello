@@ -40,3 +40,11 @@ export const userSchema = object({
     message: "El rol solo puede ser 'admin' o 'user'",
   }),
 });
+
+export const userSchemaProfile = object({
+  firstName: string().min(1, "El nombre es requerido"),
+  lastName: string().min(1, "El apellido es requerido"),
+  email: string()
+    .email({ message: "El email ingresado es inválido" })
+    .min(1, "El email es requerido"),
+});

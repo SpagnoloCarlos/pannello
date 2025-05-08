@@ -445,6 +445,60 @@ export const createUser = async (
 
 export const updateUser = async (
   token: string,
+  userData: Partial<UserCreate>,
+): Promise<ResponseCreatedUser> => {
+  try {
+    await delay();
+    const { id: userId } = JSON.parse(atob(token));
+
+    const index = users.findIndex((u) => u.id === userId);
+
+    if (index === -1) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "Usuario no encontrado",
+      };
+
+      return res;
+    }
+
+    if (userData.email !== users[index].email && users.some((u) => u.email === userData.email)) {
+      const res: ResponseCreatedUser = {
+        status: 1,
+        msg: "El email ingresado ya está en uso",
+      };
+
+      return res;
+    }
+
+    const updatedUser: User = {
+      ...users[index],
+      ...userData,
+      id: userId,
+    };
+
+    users[index] = updatedUser;
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    const res: ResponseCreatedUser = {
+      status: 0,
+      msg: "ok",
+      user: userWithoutPassword,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedUser = {
+      status: 1,
+      msg: "Ocurrió un error al actualizar el usuario",
+    };
+
+    return res;
+  }
+};
+
+export const updateUserByAdmin = async (
+  token: string,
   userId: number,
   userData: Partial<UserCreate>,
 ): Promise<ResponseCreatedUser> => {

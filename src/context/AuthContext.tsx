@@ -3,7 +3,9 @@ import { loginApi } from "../services/api";
 
 interface User {
   role: "user" | "admin";
-  [key: string]: any;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 interface LoginProps {
@@ -18,6 +20,7 @@ interface AuthContextType {
   login: (data: LoginProps) => Promise<LoginResponse>;
   logout: () => void;
   loading: boolean;
+  setUser: (user: User) => void;
 }
 
 interface AuthProviderProps {
@@ -95,6 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     logout,
     loading,
+    setUser,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
