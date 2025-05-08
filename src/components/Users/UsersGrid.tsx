@@ -31,9 +31,8 @@ const UsersGrid = () => {
             <Card key={`skeleton_user_${index}`}>
               <div className="animate-pulse">
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
-                <div className="h-5 bg-gray-200 rounded w-46 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="h-5 bg-gray-200 rounded w-46 mb-3"></div>
+                <div className="h-[25.5px] bg-gray-200 rounded w-24 mb-4"></div>
                 <div className="h-10 bg-gray-200 rounded-md w-full"></div>
               </div>
             </Card>
@@ -48,11 +47,9 @@ const UsersGrid = () => {
                 <span className="text-sm font-semibold border border-gray-400 rounded-4xl py-1 px-3 mt-2 max-w-fit">
                   {role === "admin" ? "Administrador" : "Usuario"}
                 </span>
-                <Button className="mt-4">
-                  <Link to={`/user/${id}`} className="w-full">
-                    Ver usuario
-                  </Link>
-                </Button>
+                <Link to={`/user/${id}`} className="w-full mt-4">
+                  <Button className="w-full">Ver usuario</Button>
+                </Link>
               </div>
             </Card>
           ))}

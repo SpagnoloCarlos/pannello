@@ -59,7 +59,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                 <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
                 {user?.role === "user" ? (
                   <>
-                    <div className="h-3 bg-gray-200 rounded w-32 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
                     <div className="h-10 bg-gray-200 rounded-md w-full"></div>
                   </>
                 ) : (
