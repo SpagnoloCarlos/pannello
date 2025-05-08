@@ -11,11 +11,14 @@ export const studySchema = object({
   title: string().min(1, "El título es requerido"),
   institution: string().min(1, "La institución es requerida"),
   year: string()
-    .transform(Number)
-    .refine((val) => !isNaN(val), "Debe ser un número válido")
-    .refine((val) => val >= 1000 && val <= 9999, "El año debe tener 4 dígitos")
-    .refine((val) => val <= new Date().getFullYear(), "El año no puede ser mayor al actual")
-    .refine((val) => Number.isInteger(val), "El año debe ser un número entero"),
+    .min(1, "El año es requerido")
+    .refine((val) => !isNaN(Number(val)), "Debe ser un número válido")
+    .refine((val) => {
+      const num = Number(val);
+      return num >= 1000 && num <= 9999;
+    }, "El año debe tener 4 dígitos")
+    .refine((val) => Number(val) <= new Date().getFullYear(), "El año no puede ser mayor al actual")
+    .refine((val) => Number.isInteger(Number(val)), "El año debe ser un número entero"),
   description: string().min(1, "La descripción es requerida"),
 });
 

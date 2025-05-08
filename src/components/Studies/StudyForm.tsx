@@ -4,7 +4,14 @@ import Input from "../Input";
 import { studySchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState, useTransition } from "react";
-import { createStudy, fetchUserStudyById, updateStudy } from "../../services/api";
+import {
+  createStudy,
+  createStudyByAdmin,
+  fetchUserStudyById,
+  fetchUserStudyByIdByAdmin,
+  updateStudy,
+  updateStudyByAdmin,
+} from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 import { useToast } from "../../context/ToastContext";
@@ -18,10 +25,11 @@ interface IFormInput {
 
 interface StudyFormProps {
   onSuccess?: () => void;
+  idUser?: number;
   idStudy?: number;
 }
 
-const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
+const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
   const [defaultValues, setDefaultValues] = useState({
     title: "",
     institution: "",
@@ -37,7 +45,7 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
     defaultValues,
     resolver: zodResolver(studySchema),
   });
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
@@ -52,8 +60,13 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
     }
 
     const response = idStudy
-      ? await updateStudy(token, idStudy, data)
-      : await createStudy(token, data);
+      ? user?.role === "admin"
+        ? await updateStudyByAdmin(token, idUser, idStudy, data)
+        : await updateStudy(token, idStudy, data)
+      : user?.role === "admin"
+        ? await createStudyByAdmin(token, idUser, data)
+        : await createStudy(token, data);
+
     if (response.status === 0) {
       closeModal();
       onSuccess?.();
@@ -75,7 +88,10 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
   useEffect(() => {
     if (token && idStudy) {
       startTransition(async () => {
-        const response = await fetchUserStudyById(token, idStudy);
+        const response =
+          user?.role === "admin"
+            ? await fetchUserStudyByIdByAdmin(token, idUser, idStudy)
+            : await fetchUserStudyById(token, idStudy);
         if (response.status === 0 && response.study) {
           setDefaultValues(response.study);
           reset(response.study);

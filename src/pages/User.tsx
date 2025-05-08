@@ -18,6 +18,8 @@ import { useModal } from "../context/ModalContext";
 import UserForm from "../components/Users/UserForm";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
+import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
+import StudyForm from "../components/Studies/StudyForm";
 
 interface User extends UserWithoutPassword {
   studies: Study[];
@@ -34,6 +36,23 @@ const User = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    if (token && idUser) {
+      startTransition(async () => {
+        const response = await fetchUserById(token, idUser);
+
+        if (response?.status === 0 && response?.user) {
+          setUser(response?.user);
+        } else {
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
+        }
+      });
+    }
+  }, [token, idUser, refreshKey]);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -84,22 +103,16 @@ const User = () => {
     );
   };
 
-  useEffect(() => {
-    if (token && idUser) {
-      startTransition(async () => {
-        const response = await fetchUserById(token, idUser);
-
-        if (response?.status === 0 && response?.user) {
-          setUser(response?.user);
-        } else {
-          showToast({
-            title: response.msg,
-            position: "bottomRight",
-          });
-        }
-      });
-    }
-  }, [token, idUser, refreshKey]);
+  const handleAddStudy = () => {
+    openModal(
+      <div className="flex flex-col gap-8">
+        <h2 className="text-xl font-semibold">Agregar estudio</h2>
+        <div>
+          <StudyForm onSuccess={handleRefresh} idUser={idUser} />
+        </div>
+      </div>,
+    );
+  };
 
   if (!isPending && !user) {
     return (
@@ -151,13 +164,19 @@ const User = () => {
         </header>
 
         <div className="flex flex-col gap-8 my-4">
-          <h2 className="text-3xl font-semibold">Estudios</h2>
-          <StudiesGrid studies={user?.studies ?? null} />
+          <div className="flex flex-col xs:items-center gap-4 xs:justify-between xs:flex-row">
+            <h2 className="text-3xl font-semibold">Estudios</h2>
+            <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleAddStudy}>
+              Agregar Estudio
+              <CirclePlusIcon />
+            </Button>
+          </div>
+          <StudiesGrid onRefresh={handleRefresh} studies={user?.studies ?? null} />
         </div>
 
         <div className="flex flex-col gap-8 my-4">
           <h2 className="text-3xl font-semibold">Direcciones</h2>
-          <AddressesGrid addresses={user?.addresses ?? null} />
+          <AddressesGrid onRefresh={handleRefresh} addresses={user?.addresses ?? null} />
         </div>
       </div>
     </section>

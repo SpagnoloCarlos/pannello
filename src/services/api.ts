@@ -363,7 +363,7 @@ export const fetchUserById = async (token: string, userId: number): Promise<Resp
     if (!user) {
       const res: ResponseFindUser = {
         status: 1,
-        msg: "El usuario no existe",
+        msg: "Usuario no encontrado",
       };
       return res;
     }
@@ -576,7 +576,51 @@ export const fetchUserStudyById = async (
     if (!study) {
       const res: ResponseCreatedStudy = {
         status: 1,
-        msg: "El estudio no existe",
+        msg: "Estudio no encontrado",
+      };
+      return res;
+    }
+
+    const res: ResponseCreatedStudy = {
+      status: 0,
+      msg: "ok",
+      study,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedStudy = {
+      status: 1,
+      msg: "Ocurrió un error al obtener el estudio",
+    };
+
+    return res;
+  }
+};
+
+export const fetchUserStudyByIdByAdmin = async (
+  token: string,
+  userId: number,
+  id: number,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+    const study = studies.find((s) => s.userId === userId && s.id === id);
+
+    if (!study) {
+      const res: ResponseCreatedStudy = {
+        status: 1,
+        msg: "Estudio no encontrado",
       };
       return res;
     }
@@ -629,6 +673,47 @@ export const createStudy = async (
   }
 };
 
+export const createStudyByAdmin = async (
+  token: string,
+  userId: number,
+  studyData: StudyCreate,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const newStudy: Study = {
+      ...studyData,
+      id: studies.length + 1,
+      userId: userId,
+    };
+
+    studies.push(newStudy);
+
+    const res: ResponseCreatedStudy = {
+      status: 0,
+      study: newStudy,
+      msg: "ok",
+    };
+    return res;
+  } catch {
+    const res: ResponseCreatedStudy = {
+      status: 1,
+      msg: "Ocurrió un error al crear el estudio",
+    };
+    return res;
+  }
+};
+
 export const updateStudy = async (
   token: string,
   studyId: number,
@@ -637,6 +722,54 @@ export const updateStudy = async (
   try {
     await delay();
     const { id: userId } = JSON.parse(atob(token));
+    const index = studies.findIndex((s) => s.id === studyId && s.userId === userId);
+
+    if (index === -1) {
+      return {
+        status: 1,
+        msg: "Estudio no encontrado",
+      };
+    }
+
+    const updatedStudy: Study = {
+      ...studies[index],
+      ...studyData,
+    };
+
+    studies[index] = updatedStudy;
+
+    return {
+      status: 0,
+      msg: "ok",
+      study: updatedStudy,
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al actualizar el estudio",
+    };
+  }
+};
+
+export const updateStudyByAdmin = async (
+  token: string,
+  userId: number,
+  studyId: number,
+  studyData: Partial<StudyCreate>,
+): Promise<ResponseCreatedStudy> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
     const index = studies.findIndex((s) => s.id === studyId && s.userId === userId);
 
     if (index === -1) {
@@ -697,6 +830,50 @@ export const deleteStudy = async (token: string, studyId: number): Promise<Respo
   }
 };
 
+export const deleteStudyByAdmin = async (
+  token: string,
+  userId: number,
+  studyId: number,
+): Promise<Response> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const index = studies.findIndex((s) => s.userId === userId && s.id === studyId);
+
+    if (index === -1) {
+      const res: Response = {
+        status: 1,
+        msg: "Estudio no encontrado",
+      };
+      return res;
+    }
+
+    studies.splice(index, 1);
+
+    const res: Response = {
+      status: 0,
+      msg: "Estudio eliminado con éxito",
+    };
+    return res;
+  } catch {
+    const res: Response = {
+      status: 1,
+      msg: "Ocurrió un error al eliminar el estudio",
+    };
+    return res;
+  }
+};
+
 // Direcciones
 export const fetchUserAddresses = async (token: string): Promise<ResponseAllAddresses> => {
   try {
@@ -732,7 +909,7 @@ export const fetchUserAddressById = async (
     if (!address) {
       const res: ResponseCreatedAddress = {
         status: 1,
-        msg: "La dirección no existe",
+        msg: "Dirección no encontrada",
       };
       return res;
     }

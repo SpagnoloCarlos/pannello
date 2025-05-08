@@ -1,6 +1,6 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { deleteStudy, fetchUserStudies, type Study } from "../../services/api";
+import { deleteStudy, deleteStudyByAdmin, fetchUserStudies, type Study } from "../../services/api";
 import Card from "../Card";
 import Button from "../Button";
 import { useModal } from "../../context/ModalContext";
@@ -9,6 +9,7 @@ import EditIcon from "../Icons/EditIcon";
 import TrashIcon from "../Icons/TrashIcon";
 import ConfirmDialog from "../ConfirmDialog";
 import { useToast } from "../../context/ToastContext";
+import { useParams } from "react-router";
 
 interface StudiesGridProps {
   onRefresh?: () => void;
@@ -22,6 +23,8 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
   const skeletonArray = Array(3).fill(null);
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
+  const params = useParams();
+  const idUser = Number(params?.id || 0);
 
   useEffect(() => {
     if (token) {
@@ -50,7 +53,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
       <div className="flex flex-col gap-8">
         <h2 className="text-xl font-semibold">Editar estudio</h2>
         <div>
-          <StudyForm onSuccess={onRefresh} idStudy={id} />
+          <StudyForm onSuccess={onRefresh} idStudy={id} idUser={idUser} />
         </div>
       </div>,
     );
@@ -58,7 +61,10 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
 
   const handleDeleteStudy = async (id: number) => {
     if (token) {
-      const response = await deleteStudy(token, id);
+      const response =
+        user?.role === "admin"
+          ? await deleteStudyByAdmin(token, idUser, id)
+          : await deleteStudy(token, id);
 
       if (response?.status === 0) {
         showToast({
@@ -123,22 +129,22 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                 <span className="text-md font-semibold">{institution}</span>
                 <span className="text-sm text-white/60">Año: {year}</span>
                 <p className="text-sm text-white/60 mb-auto">{description}</p>
-                {user?.role === "user" && (
-                  <div className="flex items-center gap-2 mt-4">
-                    <Button className="w-1/2 gap-1" onClick={() => handleEditStudy(id)}>
-                      Editar
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      className="w-1/2 gap-1"
-                      onClick={() => handleDeleteStudyConfirm(id)}
-                    >
-                      Eliminar
-                      <TrashIcon />
-                    </Button>
-                  </div>
-                )}
+                {/* {user?.role === "user" && ( */}
+                <div className="flex items-center gap-2 mt-4">
+                  <Button className="w-1/2 gap-1" onClick={() => handleEditStudy(id)}>
+                    Editar
+                    <EditIcon />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-1/2 gap-1"
+                    onClick={() => handleDeleteStudyConfirm(id)}
+                  >
+                    Eliminar
+                    <TrashIcon />
+                  </Button>
+                </div>
+                {/* )} */}
               </div>
             </Card>
           ))}
