@@ -30,19 +30,18 @@ interface StudyFormProps {
 }
 
 const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
-  const [defaultValues, setDefaultValues] = useState({
-    title: "",
-    institution: "",
-    year: "",
-    description: "",
-  });
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues,
+    defaultValues: {
+      title: "",
+      institution: "",
+      year: "",
+      description: "",
+    },
     resolver: zodResolver(studySchema),
   });
   const { token, user } = useAuth();
@@ -93,7 +92,6 @@ const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
             ? await fetchUserStudyByIdByAdmin(token, idUser, idStudy)
             : await fetchUserStudyById(token, idStudy);
         if (response.status === 0 && response.study) {
-          setDefaultValues(response.study);
           reset(response.study);
         } else {
           showToast({

@@ -4,7 +4,7 @@ import Input from "../Input";
 import { userSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState, useTransition } from "react";
-import { createUser, fetchUserById, updateUser, type User } from "../../services/api";
+import { createUser, fetchUserById, updateUser } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 import Select from "../Select";
@@ -24,20 +24,19 @@ interface UserFormProps {
 }
 
 const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
-  const [defaultValues, setDefaultValues] = useState<IFormInput>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    role: "user",
-  });
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      role: "user",
+    },
     resolver: zodResolver(userSchema),
   });
   const { token } = useAuth();
@@ -51,12 +50,7 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
       startTransition(async () => {
         const response = await fetchUserById(token, idUser);
         if (response.status === 0 && response.user !== undefined) {
-          const user: User = {
-            ...response.user,
-            password: "",
-          };
-          setDefaultValues(user);
-          reset(user);
+          reset(response.user);
         } else {
           showToast({
             title: response.msg,

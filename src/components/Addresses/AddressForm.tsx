@@ -30,19 +30,18 @@ interface AddressFormProps {
 }
 
 const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => {
-  const [defaultValues, setDefaultValues] = useState({
-    street: "",
-    city: "",
-    country: "",
-    zipCode: "",
-  });
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues,
+    defaultValues: {
+      street: "",
+      city: "",
+      country: "",
+      zipCode: "",
+    },
     resolver: zodResolver(AddressSchema),
   });
   const { token, user } = useAuth();
@@ -60,7 +59,6 @@ const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => 
             ? await fetchUserAddressByIdByAdmin(token, idUser, idAddress)
             : await fetchUserAddressById(token, idAddress);
         if (response.status === 0 && response.address) {
-          setDefaultValues(response.address);
           reset(response.address);
         } else {
           showToast({
