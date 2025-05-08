@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Button from "../components/Button";
 import HamburgerMenu from "../components/HamburgerMenu";
 import { useModal } from "../context/ModalContext";
@@ -9,6 +9,10 @@ import UserForm from "../components/Users/UserForm";
 const Users = () => {
   const { openModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    document.title = "Gestión de Usuarios | Pannello";
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);

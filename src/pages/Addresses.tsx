@@ -3,12 +3,16 @@ import AddressesGrid from "../components/Addresses/AddressesGrid";
 import HamburgerMenu from "../components/HamburgerMenu";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import AddressForm from "../components/Addresses/AddressForm";
 
 const Addresses = () => {
   const { openModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    document.title = "Mis Direcciones | Pannello";
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);

@@ -45,6 +45,7 @@ const User = () => {
 
         if (response?.status === 0 && response?.user) {
           setUser(response?.user);
+          document.title = `${response.user.firstName} ${response.user.lastName} | Pannello`;
         } else {
           showToast({
             title: response.msg,

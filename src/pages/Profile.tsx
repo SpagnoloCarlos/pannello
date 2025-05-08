@@ -1,9 +1,14 @@
 import Card from "../components/Card";
 import HamburgerMenu from "../components/HamburgerMenu";
 import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 const Profile = () => {
   const { user } = useAuth();
+
+  useEffect(() => {
+    document.title = "Mi Perfil | Pannello";
+  }, []);
 
   return (
     <section className="w-full max-w-5xl px-6 py-8">

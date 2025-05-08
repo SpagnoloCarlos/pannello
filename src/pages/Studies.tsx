@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Button from "../components/Button";
 import HamburgerMenu from "../components/HamburgerMenu";
 import StudiesGrid from "../components/Studies/StudiesGrid";
@@ -9,6 +9,10 @@ import StudyForm from "../components/Studies/StudyForm";
 const Studies = () => {
   const { openModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    document.title = "Mis Estudios | Pannello";
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
