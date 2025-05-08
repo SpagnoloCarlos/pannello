@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import { createAddress, fetchUserAddressById, updateAddress } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
+import { useToast } from "../../context/ToastContext";
 
 interface IAddressFormInput {
   street: string;
@@ -41,6 +42,7 @@ const AddressForm = ({ onSuccess, idAddress }: AddressFormProps) => {
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
   const [isPending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (idAddress && token) {
@@ -50,7 +52,10 @@ const AddressForm = ({ onSuccess, idAddress }: AddressFormProps) => {
           setDefaultValues(response.address);
           reset(response.address);
         } else {
-          console.error(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }
@@ -67,9 +72,17 @@ const AddressForm = ({ onSuccess, idAddress }: AddressFormProps) => {
       : await createAddress(token, data);
 
     if (response.status === 0) {
-      onSuccess?.();
       closeModal();
+      onSuccess?.();
+      showToast({
+        title: idAddress ? "Dirección modificada con éxito" : "Dirección creada con éxito",
+        position: "bottomRight",
+      });
     } else {
+      showToast({
+        title: response.msg,
+        position: "bottomRight",
+      });
       setError(response.msg);
     }
 

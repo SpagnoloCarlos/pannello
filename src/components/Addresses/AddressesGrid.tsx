@@ -8,6 +8,7 @@ import Button from "../Button";
 import EditIcon from "../Icons/EditIcon";
 import TrashIcon from "../Icons/TrashIcon";
 import ConfirmDialog from "../ConfirmDialog";
+import { useToast } from "../../context/ToastContext";
 
 interface AddressesGridProps {
   onRefresh?: () => void;
@@ -20,6 +21,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
   const [userAddresses, setUserAddresses] = useState<Address[]>();
   const skeletonArray = Array(3).fill(null);
   const { openModal, closeModal } = useModal();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (token) {
@@ -29,7 +31,10 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
           if (response.status === 0) {
             setUserAddresses(response.addresses);
           } else {
-            console.log(response.msg);
+            showToast({
+              title: response.msg,
+              position: "bottomRight",
+            });
           }
         });
       } else {
@@ -57,11 +62,18 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
 
       if (response?.status === 0) {
         closeModal();
+        showToast({
+          title: "Dirección eliminada con éxito",
+          position: "bottomRight",
+        });
         if (onRefresh) {
           onRefresh();
         }
       } else {
-        console.log(response?.msg);
+        showToast({
+          title: response.msg,
+          position: "bottomRight",
+        });
       }
     }
   };

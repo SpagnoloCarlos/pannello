@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import { createStudy, fetchUserStudyById, updateStudy } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
+import { useToast } from "../../context/ToastContext";
 
 interface IFormInput {
   title: string;
@@ -41,6 +42,7 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
   const [isPending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
@@ -53,9 +55,17 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
       ? await updateStudy(token, idStudy, data)
       : await createStudy(token, data);
     if (response.status === 0) {
-      onSuccess?.();
       closeModal();
+      onSuccess?.();
+      showToast({
+        title: idStudy ? "Estudio modificado con éxito" : "Estudio creado con éxito",
+        position: "bottomRight",
+      });
     } else {
+      showToast({
+        title: response.msg,
+        position: "bottomRight",
+      });
       setError(response.msg);
     }
 
@@ -70,7 +80,10 @@ const StudyForm = ({ onSuccess, idStudy }: StudyFormProps) => {
           setDefaultValues(response.study);
           reset(response.study);
         } else {
-          console.error(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }

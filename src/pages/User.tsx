@@ -17,6 +17,7 @@ import EditIcon from "../components/Icons/EditIcon";
 import { useModal } from "../context/ModalContext";
 import UserForm from "../components/Users/UserForm";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { useToast } from "../context/ToastContext";
 
 interface User extends UserWithoutPassword {
   studies: Study[];
@@ -32,6 +33,7 @@ const User = () => {
   const { openModal, closeModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -54,9 +56,16 @@ const User = () => {
 
       if (response?.status === 0) {
         closeModal();
+        showToast({
+          title: "Usuario eliminado con éxito",
+          position: "bottomRight",
+        });
         navigate("/users");
       } else {
-        console.log(response?.msg);
+        showToast({
+          title: response.msg,
+          position: "bottomRight",
+        });
       }
     }
   };
@@ -83,7 +92,10 @@ const User = () => {
         if (response?.status === 0 && response?.user) {
           setUser(response?.user);
         } else {
-          console.log(response?.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }

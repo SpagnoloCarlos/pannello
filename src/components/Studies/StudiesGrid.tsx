@@ -31,7 +31,10 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
           if (response.status === 0) {
             setUserStudies(response.studies);
           } else {
-            console.log(response.msg);
+            showToast({
+              title: response.msg,
+              position: "bottomRight",
+            });
           }
         });
       } else {
@@ -59,7 +62,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
 
       if (response?.status === 0) {
         showToast({
-          title: "El estudio fué eliminado con éxito",
+          title: "Estudio eliminado con éxito",
           position: "bottomRight",
         });
         if (onRefresh) {

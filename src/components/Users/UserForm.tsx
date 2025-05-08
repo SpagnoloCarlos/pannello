@@ -8,6 +8,7 @@ import { createUser, fetchUserById, updateUser, type User } from "../../services
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 import Select from "../Select";
+import { useToast } from "../../context/ToastContext";
 
 interface IFormInput {
   firstName: string;
@@ -43,6 +44,7 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
   const [isPending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setError("");
@@ -55,8 +57,16 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
     if (response.status === 0) {
       onSuccess?.();
       closeModal();
+      showToast({
+        title: idUser ? "Usuario modificado con éxito" : "Usuario creado con éxito",
+        position: "bottomRight",
+      });
     } else {
       setError(response.msg);
+      showToast({
+        title: response.msg,
+        position: "bottomRight",
+      });
     }
   };
 
@@ -72,7 +82,10 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
           setDefaultValues(user);
           reset(response.user);
         } else {
-          console.error(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }

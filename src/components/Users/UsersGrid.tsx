@@ -4,12 +4,14 @@ import { fetchUsers, type UserWithoutPassword } from "../../services/api";
 import Card from "../Card";
 import Button from "../Button";
 import { Link } from "react-router";
+import { useToast } from "../../context/ToastContext";
 
 const UsersGrid = () => {
   const { token } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [users, setUsers] = useState<UserWithoutPassword[]>();
   const skeletonArray = Array(3).fill(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (token) {
@@ -18,7 +20,10 @@ const UsersGrid = () => {
         if (response?.status === 0) {
           setUsers(response?.users);
         } else {
-          console.log(response?.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }

@@ -3,6 +3,7 @@ import Card from "../Card";
 import HamburgerMenu from "../HamburgerMenu";
 import { useEffect, useState, useTransition } from "react";
 import { fetchUserAddresses, fetchUserStudies, type Address, type Study } from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 const DashboardUser = () => {
   const { user, token } = useAuth();
@@ -10,6 +11,7 @@ const DashboardUser = () => {
   const [isPendingAddresses, startTransitionAddresses] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const [userAddresses, setUserAddresses] = useState<Address[]>();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (token) {
@@ -18,7 +20,10 @@ const DashboardUser = () => {
         if (response.status === 0) {
           setUserStudies(response.studies);
         } else {
-          console.log(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
 
@@ -27,7 +32,10 @@ const DashboardUser = () => {
         if (response.status === 0) {
           setUserAddresses(response.addresses);
         } else {
-          console.log(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }

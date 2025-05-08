@@ -3,11 +3,13 @@ import { useAuth } from "../../context/AuthContext";
 import HamburgerMenu from "../HamburgerMenu";
 import { fetchUsers, type UserWithoutPassword } from "../../services/api";
 import Card from "../Card";
+import { useToast } from "../../context/ToastContext";
 
 const DashboardAdmin = () => {
   const { user, token } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [users, setUsers] = useState<UserWithoutPassword[]>();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (token) {
@@ -16,7 +18,10 @@ const DashboardAdmin = () => {
         if (response.status === 0) {
           setUsers(response.users);
         } else {
-          console.log(response.msg);
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
         }
       });
     }
