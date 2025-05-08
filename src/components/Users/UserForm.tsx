@@ -7,7 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import { createUser, fetchUserById, updateUser, type User } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
-import InputRadio from "../InputRadio";
+import Select from "../Select";
 
 interface IFormInput {
   firstName: string;
@@ -154,17 +154,16 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
         name="role"
         control={control}
         render={({ field }) => (
-          <InputRadio
-            name={field.name}
+          <Select
             id="role"
-            label="Selecciona el rol"
+            label="Rol"
             error={errors?.password?.message ?? ""}
-            defaultValue="user"
+            disabled={isPending}
             options={[
               { label: "Usuario", value: "user" },
               { label: "Administrador", value: "admin" },
             ]}
-            onChange={field.onChange}
+            {...field}
           />
         )}
       />

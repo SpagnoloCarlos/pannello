@@ -1,13 +1,15 @@
 import { useParams } from "react-router";
 import Button from "../components/Button";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useAuth } from "../context/AuthContext";
 import { fetchUserById, type Address, type Study, type UserWithoutPassword } from "../services/api";
 import StudiesGrid from "../components/Studies/StudiesGrid";
 import AddressesGrid from "../components/Addresses/AddressesGrid";
 import TrashIcon from "../components/Icons/TrashIcon";
 import EditIcon from "../components/Icons/EditIcon";
+import { useModal } from "../context/ModalContext";
+import UserForm from "../components/Users/UserForm";
 
 interface User extends UserWithoutPassword {
   studies: Study[];
@@ -17,14 +19,31 @@ interface User extends UserWithoutPassword {
 const User = () => {
   const { token } = useAuth();
   const params = useParams();
-  const userId = Number(params?.id || 0);
+  const idUser = Number(params?.id || 0);
   const [isPending, startTransition] = useTransition();
   const [user, setUser] = useState<User>();
+  const { openModal } = useModal();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
+
+  const handleEditUser = () => {
+    openModal(
+      <div className="flex flex-col gap-8">
+        <h2 className="text-xl font-semibold">Agregar estudio</h2>
+        <div>
+          <UserForm onSuccess={handleRefresh} idUser={idUser} />
+        </div>
+      </div>,
+    );
+  };
 
   useEffect(() => {
-    if (token && userId) {
+    if (token && idUser) {
       startTransition(async () => {
-        const response = await fetchUserById(token, userId);
+        const response = await fetchUserById(token, idUser);
 
         if (response?.status === 0 && response?.user) {
           setUser(response?.user);
@@ -33,7 +52,7 @@ const User = () => {
         }
       });
     }
-  }, [token, userId]);
+  }, [token, idUser, refreshKey]);
 
   if (!isPending && !user) {
     return (
@@ -58,8 +77,7 @@ const User = () => {
               ) : (
                 <>
                   <h1 className="text-2xl md:text-4xl font-bold">
-                    {user?.firstName}
-                    {user?.lastName}
+                    {user?.firstName} {user?.lastName}
                   </h1>
                   <p>
                     <span className="text-sm font-semibold border border-gray-400 rounded-4xl py-1 px-3 mt-2 max-w-fit">
@@ -73,7 +91,7 @@ const User = () => {
             </div>
           </div>
           <div className="md:ml-auto flex gap-4">
-            <Button variant="tertiary" className="md:ml-auto gap-2">
+            <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleEditUser}>
               Editar Usuario
               <EditIcon />
             </Button>
