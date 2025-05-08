@@ -1,7 +1,8 @@
 {
-  "name": "dashboard",
+  "name": "pannello",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "Carlos Andres Spagnolo",
   "type": "module",
   "scripts": {
     "dev": "vite",
