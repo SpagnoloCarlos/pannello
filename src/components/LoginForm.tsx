@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import LoginIcon from "./Icons/LoginIcon";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 interface IFormInput {
   email: string;
@@ -25,23 +25,22 @@ const LoginForm = () => {
     },
     resolver: zodResolver(loginSchema),
   });
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const { login } = useAuth();
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [isPending, starTransition] = useTransition();
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setLoading(true);
-    setError("");
-    const response = await login({ email: data.email, password: data.password });
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    starTransition(async () => {
+      setError("");
+      const response = await login({ email: data.email, password: data.password });
 
-    if (response.status === 0) {
-      navigate("/dashboard");
-    } else {
-      setError(response.msg);
-    }
-
-    setLoading(false);
+      if (response.status === 0) {
+        navigate("/dashboard");
+      } else {
+        setError(response.msg);
+      }
+    });
   };
 
   return (
@@ -62,6 +61,7 @@ const LoginForm = () => {
             placeholder="carlos.example@mail.com"
             required
             error={errors?.email?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
@@ -77,11 +77,12 @@ const LoginForm = () => {
             placeholder="************"
             required
             error={errors?.password?.message ?? ""}
+            disabled={isPending}
             {...field}
           />
         )}
       />
-      <Button type="submit" className="mt-2" disabled={loading}>
+      <Button type="submit" className="mt-2" disabled={isPending}>
         <div className="flex items-center gap-2">
           Iniciar sesión
           <LoginIcon />

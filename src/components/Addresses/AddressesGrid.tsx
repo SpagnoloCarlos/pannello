@@ -45,7 +45,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
   };
 
   if (addresses && addresses?.length === 0) {
-    return <p>El usuario no tiene direcciones cargados</p>;
+    return <p>El usuario no tiene direcciones cargadas</p>;
   }
 
   return (
