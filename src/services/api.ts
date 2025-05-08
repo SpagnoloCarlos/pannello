@@ -667,17 +667,27 @@ export const updateStudy = async (
   }
 };
 
-export const deleteStudy = async (studyId: string): Promise<{ success: boolean }> => {
+export const deleteStudy = async (token: string, studyId: number): Promise<Response> => {
   await delay();
+  const { id } = JSON.parse(atob(token));
 
-  const index = studies.findIndex((s) => s.id === Number.parseInt(studyId));
+  const index = studies.findIndex((s) => s.userId === id && s.id === studyId);
 
   if (index === -1) {
-    throw new Error("Estudio no encontrado");
+    const res: Response = {
+      status: 1,
+      msg: "Estudio no encontrado",
+    };
+    return res;
   }
 
   studies.splice(index, 1);
-  return { success: true };
+
+  const res: Response = {
+    status: 0,
+    msg: "Estudio eliminado con éxito",
+  };
+  return res;
 };
 
 // Direcciones

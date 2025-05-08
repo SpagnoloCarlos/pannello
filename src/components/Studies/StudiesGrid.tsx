@@ -1,10 +1,13 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { fetchUserStudies, type Study } from "../../services/api";
+import { deleteStudy, fetchUserStudies, type Study } from "../../services/api";
 import Card from "../Card";
 import Button from "../Button";
 import { useModal } from "../../context/ModalContext";
 import StudyForm from "./StudyForm";
+import EditIcon from "../Icons/EditIcon";
+import TrashIcon from "../Icons/TrashIcon";
+import ConfirmDialog from "../ConfirmDialog";
 
 interface StudiesGridProps {
   onRefresh?: () => void;
@@ -16,7 +19,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
   const [isPending, startTransition] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   useEffect(() => {
     if (token) {
@@ -44,12 +47,41 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
     );
   };
 
+  const handleDeleteStudy = async (id: number) => {
+    if (token) {
+      const response = await deleteStudy(token, id);
+
+      if (response?.status === 0) {
+        closeModal();
+        if (onRefresh) {
+          onRefresh();
+        }
+      } else {
+        console.log(response?.msg);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    closeModal();
+  };
+
+  const handleDeleteStudyConfirm = (id: number) => {
+    openModal(
+      <ConfirmDialog
+        title="¿Está seguro de eliminar este estudio?"
+        onConfirm={() => handleDeleteStudy(id)}
+        onCancel={handleCancel}
+      />,
+    );
+  };
+
   if (studies && studies?.length === 0) {
     return <p>El usuario no tiene estudios cargados</p>;
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
       {isPending || studies === null
         ? skeletonArray.map((_, index) => (
             <Card key={`skeleton_study_${index}`}>
@@ -76,9 +108,20 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                 <span className="text-sm text-white/60">Año: {year}</span>
                 <p className="text-sm text-white/60 mb-auto">{description}</p>
                 {user?.role === "user" && (
-                  <Button className="mt-4" onClick={() => handleEditStudy(id)}>
-                    Editar
-                  </Button>
+                  <div className="flex items-center gap-2 mt-4">
+                    <Button className="w-1/2 gap-1" onClick={() => handleEditStudy(id)}>
+                      Editar
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      className="w-1/2 gap-1"
+                      onClick={() => handleDeleteStudyConfirm(id)}
+                    >
+                      Eliminar
+                      <TrashIcon />
+                    </Button>
+                  </div>
                 )}
               </div>
             </Card>

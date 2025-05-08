@@ -32,7 +32,6 @@ const User = () => {
   const { openModal, closeModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
-  const [isPendingDelete, startTransitionDelete] = useTransition();
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -49,18 +48,16 @@ const User = () => {
     );
   };
 
-  const handleDeleteUser = () => {
+  const handleDeleteUser = async () => {
     if (token) {
-      startTransitionDelete(async () => {
-        const response = await deleteUser(token, idUser);
+      const response = await deleteUser(token, idUser);
 
-        if (response?.status === 0) {
-          closeModal();
-          navigate("/users");
-        } else {
-          console.log(response?.msg);
-        }
-      });
+      if (response?.status === 0) {
+        closeModal();
+        navigate("/users");
+      } else {
+        console.log(response?.msg);
+      }
     }
   };
 
