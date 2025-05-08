@@ -11,7 +11,7 @@ const Button = ({ variant = "primary", className = "", children, ...props }: But
 
   return (
     <button
-      className={`flex items-center justify-center py-2 px-4 rounded-md cursor-pointer transition-colors duration-200 ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center py-2 px-4 rounded-md cursor-pointer transition-colors duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {children}

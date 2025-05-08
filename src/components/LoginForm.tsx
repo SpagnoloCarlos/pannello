@@ -81,7 +81,7 @@ const LoginForm = () => {
           />
         )}
       />
-      <Button type="submit" className="mt-2 disabled:bg-gray-500" disabled={loading}>
+      <Button type="submit" className="mt-2" disabled={loading}>
         <div className="flex items-center gap-2">
           Iniciar sesión
           <LoginIcon />

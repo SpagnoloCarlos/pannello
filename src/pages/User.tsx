@@ -1,9 +1,15 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Button from "../components/Button";
 import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useAuth } from "../context/AuthContext";
-import { fetchUserById, type Address, type Study, type UserWithoutPassword } from "../services/api";
+import {
+  deleteUser,
+  fetchUserById,
+  type Address,
+  type Study,
+  type UserWithoutPassword,
+} from "../services/api";
 import StudiesGrid from "../components/Studies/StudiesGrid";
 import AddressesGrid from "../components/Addresses/AddressesGrid";
 import TrashIcon from "../components/Icons/TrashIcon";
@@ -22,8 +28,10 @@ const User = () => {
   const idUser = Number(params?.id || 0);
   const [isPending, startTransition] = useTransition();
   const [user, setUser] = useState<User>();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
+  const navigate = useNavigate();
+  const [isPendingDelete, startTransitionDelete] = useTransition();
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -35,6 +43,41 @@ const User = () => {
         <h2 className="text-xl font-semibold">Agregar estudio</h2>
         <div>
           <UserForm onSuccess={handleRefresh} idUser={idUser} />
+        </div>
+      </div>,
+    );
+  };
+
+  const handleDeleteUser = () => {
+    if (token) {
+      startTransitionDelete(async () => {
+        const response = await deleteUser(token, idUser);
+
+        if (response?.status === 0) {
+          closeModal();
+          navigate("/users");
+        } else {
+          console.log(response?.msg);
+        }
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    closeModal();
+  };
+
+  const handleDeleteUserConfirm = () => {
+    openModal(
+      <div className="flex flex-col gap-8">
+        <h2 className="text-xl font-semibold">¿Está seguro de eliminar este usuario?</h2>
+        <div className="flex items-center justify-end gap-4">
+          <Button variant="primary" onClick={handleCancel} disabled={isPendingDelete}>
+            Cancelar
+          </Button>
+          <Button variant="secondary" onClick={handleDeleteUser} disabled={isPendingDelete}>
+            Eliminar
+          </Button>
         </div>
       </div>,
     );
@@ -96,7 +139,7 @@ const User = () => {
               Editar Usuario
               <EditIcon />
             </Button>
-            <Button variant="secondary" className="gap-2">
+            <Button variant="secondary" className="gap-2" onClick={handleDeleteUserConfirm}>
               Eliminar Usuario
               <TrashIcon />
             </Button>

@@ -481,6 +481,41 @@ export const updateUser = async (
   }
 };
 
+export const deleteUser = async (token: string, userId: number): Promise<Response> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      return {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+    }
+
+    const index = users.findIndex((u) => u.id === userId);
+
+    if (index === -1) {
+      return {
+        status: 1,
+        msg: "Usuario no encontrado",
+      };
+    }
+
+    users.splice(index, 1);
+
+    return {
+      status: 0,
+      msg: "Usuario eliminado con éxito",
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al eliminar el usuario",
+    };
+  }
+};
+
 // Estudios
 export const fetchUserStudies = async (token: string): Promise<Study[]> => {
   await delay();
