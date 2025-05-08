@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const response = await loginApi({ email, password });
 
-      if (response.token && isBrowser) {
+      if (response.status === 0 && response.token && response.user && isBrowser) {
         sessionStorage.setItem("token", response.token);
         sessionStorage.setItem("user", JSON.stringify(response.user));
 
@@ -72,10 +72,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { status: 0, msg: "ok" };
       }
       return { status: 1, msg: "Email o contraseña inválidos" };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error de servidor";
-
-      return { status: 1, msg: errorMessage };
+    } catch {
+      return { status: 1, msg: "Ocurrió un error en el login" };
     }
   };
 

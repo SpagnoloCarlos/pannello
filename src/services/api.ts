@@ -37,6 +37,11 @@ interface Response {
   msg: string;
 }
 
+interface ResponseLogin extends Response {
+  user?: UserWithoutPassword;
+  token?: string;
+}
+
 interface ResponseCreatedStudy extends Response {
   study: Study;
 }
@@ -259,27 +264,39 @@ const addresses: Address[] = [
 const delay = (ms: number = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Autenticación
-export const loginApi = async ({
-  email,
-  password,
-}: LoginProps): Promise<{ token: string; user: UserWithoutPassword }> => {
-  await delay();
+export const loginApi = async ({ email, password }: LoginProps): Promise<ResponseLogin> => {
+  try {
+    await delay();
+    const user = users.find((u) => u.email === email && u.password === password);
 
-  const user = users.find((u) => u.email === email && u.password === password);
+    if (!user) {
+      const res: ResponseLogin = {
+        status: 1,
+        msg: "Email o contraseña inválidos",
+      };
+      return res;
+    }
 
-  if (!user) {
-    throw new Error("Email o contraseña inválidos");
+    // Crear un token simulado que incluye el ID y rol del usuario
+    const token = btoa(JSON.stringify({ id: user.id, role: user.role }));
+
+    const { password: _, ...userWithoutPassword } = user;
+
+    const res: ResponseLogin = {
+      status: 0,
+      msg: "ok",
+      token,
+      user: userWithoutPassword,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseLogin = {
+      status: 1,
+      msg: "Ocurrió un error en el login",
+    };
+    return res;
   }
-
-  // Crear un token simulado que incluye el ID y rol del usuario
-  const token = btoa(JSON.stringify({ id: user.id, role: user.role }));
-
-  const { password: _, ...userWithoutPassword } = user;
-
-  return {
-    token,
-    user: userWithoutPassword,
-  };
 };
 
 // Usuarios
