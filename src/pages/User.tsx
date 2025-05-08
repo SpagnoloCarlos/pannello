@@ -16,6 +16,7 @@ import TrashIcon from "../components/Icons/TrashIcon";
 import EditIcon from "../components/Icons/EditIcon";
 import { useModal } from "../context/ModalContext";
 import UserForm from "../components/Users/UserForm";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 interface User extends UserWithoutPassword {
   studies: Study[];
@@ -40,7 +41,7 @@ const User = () => {
   const handleEditUser = () => {
     openModal(
       <div className="flex flex-col gap-8">
-        <h2 className="text-xl font-semibold">Agregar estudio</h2>
+        <h2 className="text-xl font-semibold">Editar usuario</h2>
         <div>
           <UserForm onSuccess={handleRefresh} idUser={idUser} />
         </div>
@@ -69,17 +70,11 @@ const User = () => {
 
   const handleDeleteUserConfirm = () => {
     openModal(
-      <div className="flex flex-col gap-8">
-        <h2 className="text-xl font-semibold">¿Está seguro de eliminar este usuario?</h2>
-        <div className="flex items-center justify-end gap-4">
-          <Button variant="primary" onClick={handleCancel} disabled={isPendingDelete}>
-            Cancelar
-          </Button>
-          <Button variant="secondary" onClick={handleDeleteUser} disabled={isPendingDelete}>
-            Eliminar
-          </Button>
-        </div>
-      </div>,
+      <ConfirmDialog
+        title="¿Está seguro de eliminar este usuario?"
+        onConfirm={handleDeleteUser}
+        onCancel={handleCancel}
+      />,
     );
   };
 
