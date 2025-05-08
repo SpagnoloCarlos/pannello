@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import Button from "../components/Button";
-import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
+import HamburgerMenu from "../components/HamburgerMenu";
 import { useModal } from "../context/ModalContext";
 import UserPlusIcon from "../components/Icons/UserPlusIcon";
 import UsersGrid from "../components/Users/UsersGrid";

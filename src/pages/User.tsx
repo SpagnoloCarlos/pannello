@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import Button from "../components/Button";
-import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
+import HamburgerMenu from "../components/HamburgerMenu";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useAuth } from "../context/AuthContext";
 import {

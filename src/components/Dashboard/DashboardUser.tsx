@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 import Card from "../Card";
-import HamburgerMenu from "./HamburgerMenu";
+import HamburgerMenu from "../HamburgerMenu";
 import { useEffect, useState, useTransition } from "react";
 import { fetchUserAddresses, fetchUserStudies, type Address, type Study } from "../../services/api";
 

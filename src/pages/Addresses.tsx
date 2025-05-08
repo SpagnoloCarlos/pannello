@@ -1,6 +1,6 @@
 import Button from "../components/Button";
 import AddressesGrid from "../components/Addresses/AddressesGrid";
-import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
+import HamburgerMenu from "../components/HamburgerMenu";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import { useModal } from "../context/ModalContext";
 import { useCallback, useState } from "react";

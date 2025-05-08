@@ -1,5 +1,5 @@
 import Card from "../components/Card";
-import HamburgerMenu from "../components/Dashboard/HamburgerMenu";
+import HamburgerMenu from "../components/HamburgerMenu";
 import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
