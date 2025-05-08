@@ -668,26 +668,34 @@ export const updateStudy = async (
 };
 
 export const deleteStudy = async (token: string, studyId: number): Promise<Response> => {
-  await delay();
-  const { id } = JSON.parse(atob(token));
+  try {
+    await delay();
+    const { id } = JSON.parse(atob(token));
 
-  const index = studies.findIndex((s) => s.userId === id && s.id === studyId);
+    const index = studies.findIndex((s) => s.userId === id && s.id === studyId);
 
-  if (index === -1) {
+    if (index === -1) {
+      const res: Response = {
+        status: 1,
+        msg: "Estudio no encontrado",
+      };
+      return res;
+    }
+
+    studies.splice(index, 1);
+
+    const res: Response = {
+      status: 0,
+      msg: "Estudio eliminado con éxito",
+    };
+    return res;
+  } catch {
     const res: Response = {
       status: 1,
-      msg: "Estudio no encontrado",
+      msg: "Ocurrió un error al eliminar el estudio",
     };
     return res;
   }
-
-  studies.splice(index, 1);
-
-  const res: Response = {
-    status: 0,
-    msg: "Estudio eliminado con éxito",
-  };
-  return res;
 };
 
 // Direcciones
@@ -836,15 +844,32 @@ export const updateAddress = async (
   }
 };
 
-export const deleteAddress = async (addressId: string): Promise<{ success: boolean }> => {
-  await delay();
+export const deleteAddress = async (token: string, addressId: number): Promise<Response> => {
+  try {
+    await delay();
+    const { id } = JSON.parse(atob(token));
+    const index = addresses.findIndex((a) => a.userId === id && a.id === addressId);
 
-  const index = addresses.findIndex((a) => a.id === Number.parseInt(addressId));
+    if (index === -1) {
+      const res: Response = {
+        status: 1,
+        msg: "Dirección no encontrada",
+      };
+      return res;
+    }
 
-  if (index === -1) {
-    throw new Error("Dirección no encontrada");
+    addresses.splice(index, 1);
+
+    const res: Response = {
+      status: 0,
+      msg: "Dirección eliminada con éxito",
+    };
+    return res;
+  } catch {
+    const res: Response = {
+      status: 1,
+      msg: "Ocurrió un error al eliminar la dirección",
+    };
+    return res;
   }
-
-  addresses.splice(index, 1);
-  return { success: true };
 };

@@ -1,10 +1,13 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { fetchUserAddresses, type Address } from "../../services/api";
+import { deleteAddress, fetchUserAddresses, type Address } from "../../services/api";
 import Card from "../Card";
 import { useModal } from "../../context/ModalContext";
 import AddressForm from "./AddressForm";
 import Button from "../Button";
+import EditIcon from "../Icons/EditIcon";
+import TrashIcon from "../Icons/TrashIcon";
+import ConfirmDialog from "../ConfirmDialog";
 
 interface AddressesGridProps {
   onRefresh?: () => void;
@@ -16,7 +19,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
   const [isPending, startTransition] = useTransition();
   const [userAddresses, setUserAddresses] = useState<Address[]>();
   const skeletonArray = Array(3).fill(null);
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   useEffect(() => {
     if (token) {
@@ -41,6 +44,35 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
           <AddressForm onSuccess={onRefresh} idAddress={id} />
         </div>
       </div>,
+    );
+  };
+
+  const handleDeleteAddress = async (id: number) => {
+    if (token) {
+      const response = await deleteAddress(token, id);
+
+      if (response?.status === 0) {
+        closeModal();
+        if (onRefresh) {
+          onRefresh();
+        }
+      } else {
+        console.log(response?.msg);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    closeModal();
+  };
+
+  const handleDeleteAddressConfirm = (id: number) => {
+    openModal(
+      <ConfirmDialog
+        title="¿Está seguro de eliminar esta dirección?"
+        onConfirm={() => handleDeleteAddress(id)}
+        onCancel={handleCancel}
+      />,
     );
   };
 
@@ -76,9 +108,20 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
                 <span className="text-md text-white/60">País: {country}</span>
                 <span className="text-md text-white/60 mb-auto">Código Postal: {zipCode}</span>
                 {user?.role === "user" && (
-                  <Button className="mt-4" onClick={() => handleEditAddress(id)}>
-                    Editar
-                  </Button>
+                  <div className="flex items-center gap-2 mt-4">
+                    <Button className="gap-1 w-1/2" onClick={() => handleEditAddress(id)}>
+                      Editar
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      className="gap-1 w-1/2"
+                      onClick={() => handleDeleteAddressConfirm(id)}
+                    >
+                      Eliminar
+                      <TrashIcon />
+                    </Button>
+                  </div>
                 )}
               </div>
             </Card>
