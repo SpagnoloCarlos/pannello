@@ -10,7 +10,7 @@ import UsersIcon from "./Icons/UsersIcon";
 
 const Sidebar = () => {
   const { logout } = useAuth();
-  const { user } = useAuth();
+  const { role } = useAuth();
 
   return (
     <aside className="w-full hidden md:block max-w-2xs px-6 py-8 bg-gray-800">
@@ -26,7 +26,7 @@ const Sidebar = () => {
               <UserIcon />
               Mi Perfil
             </SidebarLink>
-            {user?.role === "user" && (
+            {role === "user" && (
               <>
                 <SidebarLink to="/studies">
                   <BookIcon />
@@ -38,7 +38,7 @@ const Sidebar = () => {
                 </SidebarLink>
               </>
             )}
-            {user?.role === "admin" && (
+            {role === "admin" && (
               <SidebarLink to="/users">
                 <UsersIcon />
                 Usuarios

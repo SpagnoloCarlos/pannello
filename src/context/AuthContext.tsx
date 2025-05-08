@@ -17,6 +17,7 @@ interface LoginProps {
 interface AuthContextType {
   token: string | null;
   user: User | null;
+  role: "user" | "admin";
   isAuthenticated: boolean;
   login: (data: LoginProps) => Promise<LoginResponse>;
   logout: () => void;
@@ -91,9 +92,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const isAuthenticated = !!token;
+  const role = user?.role || "user";
 
   const value: AuthContextType = {
     token,
+    role,
     user,
     isAuthenticated,
     login,

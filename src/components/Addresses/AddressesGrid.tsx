@@ -22,7 +22,7 @@ interface AddressesGridProps {
 }
 
 const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
-  const { token, user } = useAuth();
+  const { token, role } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userAddresses, setUserAddresses] = useState<Address[]>();
   const skeletonArray = Array(3).fill(null);
@@ -67,7 +67,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
   const handleDeleteAddress = async (id: number) => {
     if (token) {
       const response =
-        user?.role === "admin"
+        role === "admin"
           ? await deleteAddressByAdmin(token, idUser, id)
           : await deleteAddress(token, id);
 
@@ -116,7 +116,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
                 <div className="h-4 bg-gray-200 rounded w-46 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-                {user?.role === "user" ? (
+                {role === "user" ? (
                   <>
                     <div className="h-4 bg-gray-200 rounded w-36 mb-5"></div>
                     <div className="h-10 bg-gray-200 rounded-md w-full"></div>

@@ -8,7 +8,7 @@ import { useModal } from "../context/ModalContext";
 import UserFormProfile from "../components/Users/UserFormProfile";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { openModal } = useModal();
 
   useEffect(() => {
@@ -57,9 +57,7 @@ const Profile = () => {
             </li>
             <li>
               <span className="text-sm text-white/60">Rol</span>
-              <span className="text-lg">
-                {user?.role === "admin" ? "Administrador" : "Usuario"}
-              </span>
+              <span className="text-lg">{role === "admin" ? "Administrador" : "Usuario"}</span>
             </li>
           </ul>
         </Card>

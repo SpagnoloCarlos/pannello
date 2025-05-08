@@ -4,7 +4,7 @@ import DashboardUser from "../components/Dashboard/DashboardUser";
 import { useEffect } from "react";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { role } = useAuth();
 
   useEffect(() => {
     document.title = "Dashboard | Pannello";
@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   return (
     <section className="w-full max-w-5xl px-6 py-8">
-      {user?.role === "admin" ? <DashboardAdmin /> : <DashboardUser />}
+      {role === "admin" ? <DashboardAdmin /> : <DashboardUser />}
     </section>
   );
 };

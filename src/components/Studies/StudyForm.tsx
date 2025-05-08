@@ -44,7 +44,7 @@ const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
     },
     resolver: zodResolver(studySchema),
   });
-  const { token, user } = useAuth();
+  const { token, role } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
@@ -59,10 +59,10 @@ const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
     }
 
     const response = idStudy
-      ? user?.role === "admin"
+      ? role === "admin"
         ? await updateStudyByAdmin(token, idUser, idStudy, data)
         : await updateStudy(token, idStudy, data)
-      : user?.role === "admin"
+      : role === "admin"
         ? await createStudyByAdmin(token, idUser, data)
         : await createStudy(token, data);
 
@@ -88,7 +88,7 @@ const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
     if (token && idStudy) {
       startTransition(async () => {
         const response =
-          user?.role === "admin"
+          role === "admin"
             ? await fetchUserStudyByIdByAdmin(token, idUser, idStudy)
             : await fetchUserStudyById(token, idStudy);
         if (response.status === 0 && response.study) {

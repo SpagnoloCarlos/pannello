@@ -13,7 +13,7 @@ import UsersIcon from "./Icons/UsersIcon";
 
 const HamburgerMenu = () => {
   const [open, setOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { role, logout } = useAuth();
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -59,7 +59,7 @@ const HamburgerMenu = () => {
                     <UserIcon />
                     Mi Perfil
                   </SidebarLink>
-                  {user?.role === "user" && (
+                  {role === "user" && (
                     <>
                       <SidebarLink to="/studies">
                         <BookIcon />
@@ -71,7 +71,7 @@ const HamburgerMenu = () => {
                       </SidebarLink>
                     </>
                   )}
-                  {user?.role === "admin" && (
+                  {role === "admin" && (
                     <SidebarLink to="/users">
                       <UsersIcon />
                       Usuarios

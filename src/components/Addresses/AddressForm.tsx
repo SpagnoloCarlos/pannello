@@ -44,7 +44,7 @@ const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => 
     },
     resolver: zodResolver(AddressSchema),
   });
-  const { token, user } = useAuth();
+  const { token, role } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const { closeModal } = useModal();
@@ -55,7 +55,7 @@ const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => 
     if (idAddress && token) {
       startTransition(async () => {
         const response =
-          user?.role === "admin"
+          role === "admin"
             ? await fetchUserAddressByIdByAdmin(token, idUser, idAddress)
             : await fetchUserAddressById(token, idAddress);
         if (response.status === 0 && response.address) {
@@ -77,10 +77,10 @@ const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => 
       return;
     }
     const response = idAddress
-      ? user?.role === "admin"
+      ? role === "admin"
         ? await updateAddressByAdmin(token, idUser, idAddress, data)
         : await updateAddress(token, idAddress, data)
-      : user?.role === "admin"
+      : role === "admin"
         ? await createAddressByAdmin(token, idUser, data)
         : await createAddress(token, data);
 

@@ -17,7 +17,7 @@ interface StudiesGridProps {
 }
 
 const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
-  const { token, user } = useAuth();
+  const { token, role } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [userStudies, setUserStudies] = useState<Study[]>();
   const skeletonArray = Array(3).fill(null);
@@ -62,7 +62,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
   const handleDeleteStudy = async (id: number) => {
     if (token) {
       const response =
-        user?.role === "admin"
+        role === "admin"
           ? await deleteStudyByAdmin(token, idUser, id)
           : await deleteStudy(token, id);
 
