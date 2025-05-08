@@ -46,6 +46,27 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
   const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
 
+  useEffect(() => {
+    if (token && idUser) {
+      startTransition(async () => {
+        const response = await fetchUserById(token, idUser);
+        if (response.status === 0 && response.user !== undefined) {
+          const user: User = {
+            ...response.user,
+            password: "",
+          };
+          setDefaultValues(user);
+          reset(user);
+        } else {
+          showToast({
+            title: response.msg,
+            position: "bottomRight",
+          });
+        }
+      });
+    }
+  }, [idUser, token, reset]);
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setError("");
     if (!token) {
@@ -69,27 +90,6 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
       });
     }
   };
-
-  useEffect(() => {
-    if (token && idUser) {
-      startTransition(async () => {
-        const response = await fetchUserById(token, idUser);
-        if (response.status === 0 && response.user !== undefined) {
-          const user: User = {
-            ...response.user,
-            password: "",
-          };
-          setDefaultValues(user);
-          reset(response.user);
-        } else {
-          showToast({
-            title: response.msg,
-            position: "bottomRight",
-          });
-        }
-      });
-    }
-  }, [idUser, token, reset]);
 
   return (
     <form
@@ -155,7 +155,7 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
             type="password"
             id="password"
             label="Contraseña"
-            placeholder="Especializado en frontend"
+            placeholder="***********"
             required
             error={errors?.password?.message ?? ""}
             disabled={isPending}
@@ -170,7 +170,7 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
           <Select
             id="role"
             label="Rol"
-            error={errors?.password?.message ?? ""}
+            error={errors?.role?.message ?? ""}
             disabled={isPending}
             options={[
               { label: "Usuario", value: "user" },
