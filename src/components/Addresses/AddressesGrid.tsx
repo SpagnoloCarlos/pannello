@@ -1,6 +1,11 @@
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { deleteAddress, fetchUserAddresses, type Address } from "../../services/api";
+import {
+  deleteAddress,
+  deleteAddressByAdmin,
+  fetchUserAddresses,
+  type Address,
+} from "../../services/api";
 import Card from "../Card";
 import { useModal } from "../../context/ModalContext";
 import AddressForm from "./AddressForm";
@@ -9,6 +14,7 @@ import EditIcon from "../Icons/EditIcon";
 import TrashIcon from "../Icons/TrashIcon";
 import ConfirmDialog from "../ConfirmDialog";
 import { useToast } from "../../context/ToastContext";
+import { useParams } from "react-router";
 
 interface AddressesGridProps {
   onRefresh?: () => void;
@@ -22,6 +28,8 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
   const skeletonArray = Array(3).fill(null);
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
+  const params = useParams();
+  const idUser = Number(params?.id || 0);
 
   useEffect(() => {
     if (token) {
@@ -50,7 +58,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold">Editar dirección</h2>
         <div>
-          <AddressForm onSuccess={onRefresh} idAddress={id} />
+          <AddressForm onSuccess={onRefresh} idAddress={id} idUser={idUser} />
         </div>
       </div>,
     );
@@ -58,7 +66,10 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
 
   const handleDeleteAddress = async (id: number) => {
     if (token) {
-      const response = await deleteAddress(token, id);
+      const response =
+        user?.role === "admin"
+          ? await deleteAddressByAdmin(token, idUser, id)
+          : await deleteAddress(token, id);
 
       if (response?.status === 0) {
         closeModal();
@@ -123,22 +134,20 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
                 <span className="text-md text-white/60">Ciudad: {city}</span>
                 <span className="text-md text-white/60">País: {country}</span>
                 <span className="text-md text-white/60 mb-auto">Código Postal: {zipCode}</span>
-                {user?.role === "user" && (
-                  <div className="flex items-center gap-2 mt-4">
-                    <Button className="gap-1 w-1/2" onClick={() => handleEditAddress(id)}>
-                      Editar
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      className="gap-1 w-1/2"
-                      onClick={() => handleDeleteAddressConfirm(id)}
-                    >
-                      Eliminar
-                      <TrashIcon />
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 mt-4">
+                  <Button className="gap-1 w-1/2" onClick={() => handleEditAddress(id)}>
+                    Editar
+                    <EditIcon />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="gap-1 w-1/2"
+                    onClick={() => handleDeleteAddressConfirm(id)}
+                  >
+                    Eliminar
+                    <TrashIcon />
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}

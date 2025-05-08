@@ -111,14 +111,8 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                 <div className="h-7 bg-gray-200 rounded w-full mb-6"></div>
                 <div className="h-5 bg-gray-200 rounded w-46 mb-2"></div>
                 <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                {user?.role === "user" ? (
-                  <>
-                    <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
-                    <div className="h-10 bg-gray-200 rounded-md w-full"></div>
-                  </>
-                ) : (
-                  <div className="h-3 bg-gray-200 rounded w-32"></div>
-                )}
+                <div className="h-3 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="h-10 bg-gray-200 rounded-md w-full"></div>
               </div>
             </Card>
           ))
@@ -129,7 +123,6 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                 <span className="text-md font-semibold">{institution}</span>
                 <span className="text-sm text-white/60">Año: {year}</span>
                 <p className="text-sm text-white/60 mb-auto">{description}</p>
-                {/* {user?.role === "user" && ( */}
                 <div className="flex items-center gap-2 mt-4">
                   <Button className="w-1/2 gap-1" onClick={() => handleEditStudy(id)}>
                     Editar
@@ -144,7 +137,6 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
                     <TrashIcon />
                   </Button>
                 </div>
-                {/* )} */}
               </div>
             </Card>
           ))}

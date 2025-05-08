@@ -930,6 +930,50 @@ export const fetchUserAddressById = async (
   }
 };
 
+export const fetchUserAddressByIdByAdmin = async (
+  token: string,
+  userId: number,
+  id: number,
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const address = addresses.find((a) => a.userId === userId && a.id === id);
+
+    if (!address) {
+      const res: ResponseCreatedAddress = {
+        status: 1,
+        msg: "Dirección no encontrada",
+      };
+      return res;
+    }
+
+    const res: ResponseCreatedAddress = {
+      status: 0,
+      msg: "ok",
+      address,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedAddress = {
+      status: 1,
+      msg: "Ocurrió un error al obtener la dirección",
+    };
+    return res;
+  }
+};
+
 export const createAddress = async (
   token: string,
   addressData: AddressCreate,
@@ -942,6 +986,48 @@ export const createAddress = async (
       ...addressData,
       id: addresses.length + 1,
       userId: Number.parseInt(userId),
+    };
+
+    addresses.push(newAddress);
+
+    const res: ResponseCreatedAddress = {
+      status: 0,
+      msg: "ok",
+      address: newAddress,
+    };
+
+    return res;
+  } catch {
+    const res: ResponseCreatedAddress = {
+      status: 1,
+      msg: "Ocurrió un error al crear la dirección",
+    };
+    return res;
+  }
+};
+
+export const createAddressByAdmin = async (
+  token: string,
+  userId: number,
+  addressData: AddressCreate,
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const newAddress: Address = {
+      ...addressData,
+      id: addresses.length + 1,
+      userId: userId,
     };
 
     addresses.push(newAddress);
@@ -999,11 +1085,103 @@ export const updateAddress = async (
   }
 };
 
+export const updateAddressByAdmin = async (
+  token: string,
+  userId: number,
+  addressId: number,
+  addressData: Partial<AddressCreate>,
+): Promise<ResponseCreatedAddress> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const index = addresses.findIndex((a) => a.id === addressId && a.userId === userId);
+
+    if (index === -1) {
+      return {
+        status: 1,
+        msg: "Dirección no encontrada",
+      };
+    }
+
+    const updatedAddress: Address = {
+      ...addresses[index],
+      ...addressData,
+    };
+
+    addresses[index] = updatedAddress;
+
+    return {
+      status: 0,
+      msg: "ok",
+      address: updatedAddress,
+    };
+  } catch {
+    return {
+      status: 1,
+      msg: "Ocurrió un error al actualizar la dirección",
+    };
+  }
+};
+
 export const deleteAddress = async (token: string, addressId: number): Promise<Response> => {
   try {
     await delay();
     const { id } = JSON.parse(atob(token));
     const index = addresses.findIndex((a) => a.userId === id && a.id === addressId);
+
+    if (index === -1) {
+      const res: Response = {
+        status: 1,
+        msg: "Dirección no encontrada",
+      };
+      return res;
+    }
+
+    addresses.splice(index, 1);
+
+    const res: Response = {
+      status: 0,
+      msg: "Dirección eliminada con éxito",
+    };
+    return res;
+  } catch {
+    const res: Response = {
+      status: 1,
+      msg: "Ocurrió un error al eliminar la dirección",
+    };
+    return res;
+  }
+};
+
+export const deleteAddressByAdmin = async (
+  token: string,
+  userId: number,
+  addressId: number,
+): Promise<Response> => {
+  try {
+    await delay();
+    const { role } = JSON.parse(atob(token));
+
+    if (role !== "admin") {
+      const res: ResponseGetAllUsers = {
+        status: 1,
+        msg: "No tiene los permisos necesarios para realizar esta acción",
+      };
+
+      return res;
+    }
+
+    const index = addresses.findIndex((a) => a.userId === userId && a.id === addressId);
 
     if (index === -1) {
       const res: Response = {

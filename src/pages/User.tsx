@@ -20,6 +20,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { useToast } from "../context/ToastContext";
 import CirclePlusIcon from "../components/Icons/CirclePlusIcon";
 import StudyForm from "../components/Studies/StudyForm";
+import AddressForm from "../components/Addresses/AddressForm";
 
 interface User extends UserWithoutPassword {
   studies: Study[];
@@ -114,6 +115,17 @@ const User = () => {
     );
   };
 
+  const handleAddAddress = () => {
+    openModal(
+      <div className="flex flex-col gap-4">
+        <h2 className="text-xl font-semibold">Agregar dirección</h2>
+        <div>
+          <AddressForm onSuccess={handleRefresh} idUser={idUser} />
+        </div>
+      </div>,
+    );
+  };
+
   if (!isPending && !user) {
     return (
       <section className="w-full max-w-5xl px-6 py-8">
@@ -174,8 +186,14 @@ const User = () => {
           <StudiesGrid onRefresh={handleRefresh} studies={user?.studies ?? null} />
         </div>
 
-        <div className="flex flex-col gap-8 my-4">
-          <h2 className="text-3xl font-semibold">Direcciones</h2>
+        <div className="flex flex-col gap-8 mt-4 border-t-1 pt-12 border-gray-400 ">
+          <div className="flex flex-col xs:items-center gap-4 xs:justify-between xs:flex-row">
+            <h2 className="text-3xl font-semibold">Direcciones</h2>
+            <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleAddAddress}>
+              Agregar Dirección
+              <CirclePlusIcon />
+            </Button>
+          </div>
           <AddressesGrid onRefresh={handleRefresh} addresses={user?.addresses ?? null} />
         </div>
       </div>
