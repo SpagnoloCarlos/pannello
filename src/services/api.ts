@@ -99,7 +99,7 @@ const users: User[] = [
     lastName: "Smith",
     email: "jane.smith@example.com",
     password: "jane123",
-    role: "user",
+    role: "admin",
   },
 ];
 
@@ -107,7 +107,7 @@ const users: User[] = [
 const studies: Study[] = [
   {
     id: 1,
-    userId: 1,
+    userId: 4,
     title: "Ingeniería Informática",
     institution: "Universidad Tecnológica",
     year: "2018",
@@ -191,7 +191,7 @@ const studies: Study[] = [
 const addresses: Address[] = [
   {
     id: 1,
-    userId: 1,
+    userId: 4,
     street: "Calle Principal 123",
     city: "Ciudad Capital",
     zipCode: "12345",
@@ -286,8 +286,7 @@ export const loginApi = async ({
 export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> => {
   try {
     await delay();
-    const { role } = JSON.parse(atob(token));
-    const allUsers = users.map(({ password, ...user }) => user);
+    const { role, id } = JSON.parse(atob(token));
 
     if (role !== "admin") {
       const res: ResponseGetAllUsers = {
@@ -298,6 +297,8 @@ export const fetchUsers = async (token: string): Promise<ResponseGetAllUsers> =>
 
       return res;
     }
+
+    const allUsers = users?.filter((u) => u.id !== id)?.map(({ password, ...user }) => user);
 
     const res: ResponseGetAllUsers = {
       status: 0,

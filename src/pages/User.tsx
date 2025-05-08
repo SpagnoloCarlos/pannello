@@ -65,14 +65,14 @@ const User = () => {
   return (
     <section className="w-full max-w-5xl px-6 py-8">
       <div className="flex flex-col gap-8">
-        <header className="flex flex-col md:flex-row md:items-center gap-4 border-b-1 border-gray-400 pb-8">
+        <header className="flex flex-col lg:flex-row lg:items-center gap-4 border-b-1 border-gray-400 pb-8">
           <div className="flex gap-4">
             <HamburgerMenu />
             <div className="flex flex-col gap-1">
               {isPending ? (
                 <div className="animate-pulse">
-                  <div className="h-9 bg-gray-200 rounded w-96 mb-4"></div>
-                  <div className="h-5 bg-gray-200 rounded w-76"></div>
+                  <div className="h-7 md:h-9 bg-gray-200 rounded w-64 md:w-96 mb-3 md:mb-4"></div>
+                  <div className="h-5 md:h-5 bg-gray-200 rounded w-full 2xs:w-70 md:w-76"></div>
                 </div>
               ) : (
                 <>
@@ -83,19 +83,20 @@ const User = () => {
                     <span className="text-sm font-semibold border border-gray-400 rounded-4xl py-1 px-3 mt-2 max-w-fit">
                       {user?.role === "admin" ? "Administrador" : "Usuario"}
                     </span>
-                    <span className="text-lg"> - </span>
+                    <span className="hidden text-lg md:inline-block md:mx-2">-</span>
+                    <span className="inline-block mx-1 text-lg md:hidden"></span>
                     <span className="text-sm md:text-lg text-white/80">{user?.email}</span>
                   </p>
                 </>
               )}
             </div>
           </div>
-          <div className="md:ml-auto flex gap-4">
-            <Button variant="tertiary" className="md:ml-auto gap-2" onClick={handleEditUser}>
+          <div className="flex flex-col gap-4 md:flex-row lg:ml-auto">
+            <Button variant="tertiary" className="gap-2" onClick={handleEditUser}>
               Editar Usuario
               <EditIcon />
             </Button>
-            <Button variant="secondary" className="md:ml-auto gap-2">
+            <Button variant="secondary" className="gap-2">
               Eliminar Usuario
               <TrashIcon />
             </Button>
@@ -104,12 +105,12 @@ const User = () => {
 
         <div className="flex flex-col gap-8 my-4">
           <h2 className="text-3xl font-semibold">Estudios</h2>
-          <StudiesGrid studies={user?.studies} />
+          <StudiesGrid studies={user?.studies ?? null} />
         </div>
 
         <div className="flex flex-col gap-8 my-4">
           <h2 className="text-3xl font-semibold">Direcciones</h2>
-          <AddressesGrid addresses={user?.addresses} />
+          <AddressesGrid addresses={user?.addresses ?? null} />
         </div>
       </div>
     </section>

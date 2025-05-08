@@ -8,7 +8,6 @@
   padding: 0;
   box-sizing: border-box;
 
-  color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #030712;
 
@@ -18,9 +17,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #030712;
-    background-color: #ffffff;
-  }
+@theme {
+  --breakpoint-xs: 30rem;
+  --breakpoint-2xs: 24rem;
+  --breakpoint-3xs: 22rem;
 }

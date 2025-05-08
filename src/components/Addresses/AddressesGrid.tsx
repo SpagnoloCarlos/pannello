@@ -8,7 +8,7 @@ import Button from "../Button";
 
 interface AddressesGridProps {
   onRefresh?: () => void;
-  addresses?: Address[];
+  addresses?: Address[] | null;
 }
 
 const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
@@ -20,13 +20,15 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
 
   useEffect(() => {
     if (token) {
-      if (!addresses) {
+      if (addresses === undefined) {
         startTransition(async () => {
           const response = await fetchUserAddresses(token);
           setUserAddresses(response);
         });
       } else {
-        setUserAddresses(addresses);
+        if (addresses) {
+          setUserAddresses(addresses);
+        }
       }
     }
   }, [token, addresses]);
@@ -48,7 +50,7 @@ const AddressesGrid = ({ onRefresh, addresses }: AddressesGridProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {isPending
+      {isPending || addresses === null
         ? skeletonArray.map((_, index) => (
             <Card key={`skeleton_address_${index}`}>
               <div className="animate-pulse">

@@ -8,7 +8,7 @@ import StudyForm from "./StudyForm";
 
 interface StudiesGridProps {
   onRefresh?: () => void;
-  studies?: Study[];
+  studies?: Study[] | null;
 }
 
 const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
@@ -20,15 +20,15 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
 
   useEffect(() => {
     if (token) {
-      if (!studies) {
+      if (studies === undefined) {
         startTransition(async () => {
-          if (!token) return;
-
           const response = await fetchUserStudies(token);
           setUserStudies(response);
         });
       } else {
-        setUserStudies(studies);
+        if (studies) {
+          setUserStudies(studies);
+        }
       }
     }
   }, [token, studies]);
@@ -50,7 +50,7 @@ const StudiesGrid = ({ onRefresh, studies }: StudiesGridProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {isPending
+      {isPending || studies === null
         ? skeletonArray.map((_, index) => (
             <Card key={`skeleton_study_${index}`}>
               <div className="animate-pulse">

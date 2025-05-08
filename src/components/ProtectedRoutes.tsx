@@ -13,7 +13,9 @@ export default function ProtectedRoute() {
   return (
     <main className="flex gap-4 min-h-[100dvh] w-full">
       <Sidebar />
-      <Outlet />
+      <div className="md:max-h-[100dvh] overflow-auto w-full">
+        <Outlet />
+      </div>
     </main>
   );
 }
