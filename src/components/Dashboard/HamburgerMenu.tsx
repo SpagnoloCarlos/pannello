@@ -32,7 +32,7 @@ const HamburgerMenu = () => {
         <HamburgerIcon />
       </button>
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition duration-200 ${open ? "z-auto" : "-z-10"}`}
+        className={`fixed inset-0 backdrop-blur-sm transition duration-200 ${open ? "z-auto bg-black/50" : "-z-10 bg-transparent"}`}
         onClick={() => handleClose()}
         aria-hidden="true"
       />
