@@ -116,6 +116,9 @@ const users: User[] = [
   },
 ];
 
+// Contador global para IDs de usuario
+let userIdCounter = users.reduce((max, user) => Math.max(max, user.id), 0) + 1;
+
 // Estudios
 const studies: Study[] = [
   {
@@ -417,7 +420,7 @@ export const createUser = async (
 
     const newUser: User = {
       ...userData,
-      id: users.length + 1,
+      id: userIdCounter++,
     };
 
     users.push(newUser);
