@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { loginApi } from "../services/api";
+import { getSessionValue, removeSessionValue, setSessionValue } from "../helpers/storageHelper";
 
 interface User {
   role: "user" | "admin";
@@ -51,8 +52,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     if (isBrowser) {
-      const storedToken = sessionStorage.getItem("token");
-      const storedUser = sessionStorage.getItem("user");
+      const storedToken = getSessionValue("token");
+      const storedUser = getSessionValue("user");
 
       if (storedToken && storedUser) {
         setToken(storedToken);
@@ -67,8 +68,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await loginApi({ email, password });
 
       if (response.status === 0 && response.token && response.user && isBrowser) {
-        sessionStorage.setItem("token", response.token);
-        sessionStorage.setItem("user", JSON.stringify(response.user));
+        setSessionValue("token", response.token);
+        setSessionValue("user", JSON.stringify(response.user));
 
         setToken(response.token);
         setUser(response.user);
@@ -82,8 +83,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = (): void => {
     if (isBrowser) {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("user");
+      removeSessionValue("token");
+      removeSessionValue("user");
     }
     setToken(null);
     setUser(null);

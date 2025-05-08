@@ -8,6 +8,7 @@ import { updateUser } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useModal } from "../../context/ModalContext";
 import { useToast } from "../../context/ToastContext";
+import { setSessionValue } from "../../helpers/storageHelper";
 
 interface IFormInput {
   firstName: string;
@@ -59,7 +60,7 @@ const UserFormProfile = ({ onSuccess }: UserFormProps) => {
 
     if (response.status === 0) {
       if (response.user) {
-        sessionStorage.setItem("user", JSON.stringify(response.user));
+        setSessionValue("user", JSON.stringify(response.user));
         setUser(response.user);
       }
       onSuccess?.();
