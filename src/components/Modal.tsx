@@ -13,7 +13,7 @@ const Modal = () => {
         onClick={closeModal}
         aria-hidden="true"
       />
-      <div className="relative z-50 w-full max-w-lg p-6 mx-4 bg-gray-800 rounded-lg border border-gray-400">
+      <div className="relative z-50 w-full max-w-lg p-6 mx-4 bg-gray-950 rounded-lg border border-gray-400">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
