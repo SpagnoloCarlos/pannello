@@ -13,6 +13,7 @@ import AdminRoutes from "./components/AccessControl/AdminRoutes.tsx";
 import Users from "./pages/Users.tsx";
 import User from "./pages/User.tsx";
 import Providers from "./providers/Providers.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -31,6 +32,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="user/:id" element={<User />} />
           </Route>
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Modal />
     </Providers>
