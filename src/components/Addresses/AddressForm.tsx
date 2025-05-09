@@ -43,6 +43,7 @@ const AddressForm = ({ onSuccess, idUser = 0, idAddress }: AddressFormProps) => 
       zipCode: "",
     },
     resolver: zodResolver(AddressSchema),
+    mode: "onSubmit",
   });
   const { token, role } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);

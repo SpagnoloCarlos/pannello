@@ -38,6 +38,7 @@ const UserForm = ({ onSuccess, idUser }: UserFormProps) => {
       role: "user",
     },
     resolver: zodResolver(userSchema),
+    mode: "onSubmit",
   });
   const { token } = useAuth();
   const [error, setError] = useState<string>("");

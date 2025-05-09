@@ -24,6 +24,7 @@ const LoginForm = () => {
       password: "",
     },
     resolver: zodResolver(loginSchema),
+    mode: "onSubmit",
   });
   const navigate = useNavigate();
   const { login } = useAuth();

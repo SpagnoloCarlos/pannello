@@ -14,6 +14,7 @@ interface IFormInput {
   firstName: string;
   lastName: string;
   email: string;
+  password?: string;
 }
 
 interface UserFormProps {
@@ -31,8 +32,10 @@ const UserFormProfile = ({ onSuccess }: UserFormProps) => {
       firstName: "",
       lastName: "",
       email: "",
+      password: "",
     },
     resolver: zodResolver(userSchemaProfile),
+    mode: "onSubmit",
   });
   const { token, user, setUser } = useAuth();
   const [error, setError] = useState<string>("");
@@ -127,6 +130,20 @@ const UserFormProfile = ({ onSuccess }: UserFormProps) => {
             placeholder="carlos@example.com"
             required
             error={errors?.email?.message ?? ""}
+            {...field}
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        render={({ field }) => (
+          <Input
+            type="password"
+            id="password"
+            label="Contraseña"
+            placeholder="*********"
+            error={errors?.password?.message ?? ""}
             {...field}
           />
         )}

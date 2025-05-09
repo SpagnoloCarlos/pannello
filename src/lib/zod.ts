@@ -51,4 +51,23 @@ export const userSchemaProfile = object({
   email: string()
     .email({ message: "El email ingresado es inválido" })
     .min(1, "El email es requerido"),
+  password: string()
+    .transform((str) => (str === "" ? undefined : str))
+    .optional()
+    .superRefine((val, ctx) => {
+      if (val === undefined || val === "") return;
+
+      if (val.length < 6) {
+        ctx.addIssue({
+          code: "custom",
+          message: "La contraseña debe tener al menos 6 caracteres",
+        });
+      }
+      if (!/^(?=.*[A-Za-z])(?=.*\d)/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "La contraseña debe contener letras y números",
+        });
+      }
+    }),
 });

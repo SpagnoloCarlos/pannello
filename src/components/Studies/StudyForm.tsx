@@ -43,6 +43,7 @@ const StudyForm = ({ onSuccess, idUser = 0, idStudy }: StudyFormProps) => {
       description: "",
     },
     resolver: zodResolver(studySchema),
+    mode: "onSubmit",
   });
   const { token, role } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
