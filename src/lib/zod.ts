@@ -4,7 +4,9 @@ export const loginSchema = object({
   email: string()
     .email({ message: "El email ingresado es inválido" })
     .min(1, "El email es requerido"),
-  password: string().min(1, "La contraseña es requerida"),
+  password: string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)/, "La contraseña debe contener letras y números"),
 });
 
 export const studySchema = object({
@@ -35,7 +37,9 @@ export const userSchema = object({
   email: string()
     .email({ message: "El email ingresado es inválido" })
     .min(1, "El email es requerido"),
-  password: string().min(1, "La contraseña es requerida"),
+  password: string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)/, "La contraseña debe contener letras y números"),
   role: string().refine((val) => val === "admin" || val === "user", {
     message: "El rol solo puede ser 'admin' o 'user'",
   }),
