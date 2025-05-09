@@ -34,6 +34,14 @@ const LoginForm = () => {
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     starTransition(async () => {
       setError("");
+
+      // Equivalente a
+      /* 
+        const response = await axios.post("https:example.com/api/login", {
+          email: data.email,
+          password: data.password
+        });
+      */
       const response = await login({ email: data.email, password: data.password });
 
       if (response.status === 0) {
