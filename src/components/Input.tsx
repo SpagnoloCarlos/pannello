@@ -16,7 +16,10 @@ const Input = ({ id, label, error, type, ...props }: InputProps) => {
 
   return (
     <div className="flex flex-col gap-1 relative">
-      <label className="text-sm" htmlFor={id}>
+      <label
+        className={`text-sm ${props.required ? "after:ml-0.5 after:text-red-500 after:content-['*']" : ""}`}
+        htmlFor={id}
+      >
         {label}
       </label>
       <input
